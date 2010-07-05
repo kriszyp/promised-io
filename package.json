@@ -1,0 +1,14 @@
+{
+	"name": "promised-io",
+	"author": "Kris Zyp",
+	"dependencies": [],
+	"contributors": [],
+	"keywords": [
+		"promise",
+		"io"
+	],
+	"engines": {"node":">=0.1.30", "rhino": true},
+	"githubName": "promised-io",
+	"type": "zip",
+	"location": "http://github.com/kriszyp/promised-io/zipball/master"
+}
