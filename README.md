@@ -5,7 +5,7 @@ separate from call invocation. Promised-IO provides cross-platform
 file, HTTP, and system interaction with promises for asynchronous operations.
 
 Promised-IO also utilizes "lazy arrays" for progressively completed 
-actions. Lazy arrays provide all the standard iterative Array methods for
+actions or for streaming of data. Lazy arrays provide all the standard iterative Array methods for
 receiving callbacks as actions are completed. Lazy arrays are utilized
 for progressive loading of files and HTTP responses.   
 
