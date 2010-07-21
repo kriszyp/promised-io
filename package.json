@@ -3,6 +3,7 @@
 	"author": "Kris Zyp",
 	"dependencies": [],
 	"contributors": [],
+	"version": "0.0.1",
 	"keywords": [
 		"promise",
 		"io"
@@ -10,5 +11,11 @@
 	"engines": {"node":">=0.1.30", "rhino": true},
 	"githubName": "promised-io",
 	"type": "zip",
-	"location": "http://github.com/kriszyp/promised-io/zipball/master"
+	"location": "http://github.com/kriszyp/promised-io/zipball/master",
+	"overlay": {
+		"npm": {
+			"main": "./lib/fs",
+			"directories": "./lib"
+		}
+	}
 }
