@@ -14,8 +14,8 @@
 	"location": "http://github.com/kriszyp/promised-io/zipball/master",
 	"overlay": {
 		"npm": {
-			"main": "./lib/fs",
-			"directories": "./lib"
+			"main": "./lib/fs"
 		}
-	}
+	},
+	"directories": { "lib": "./lib" }
 }
