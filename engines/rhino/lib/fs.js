@@ -5,3 +5,5 @@ exports.statSync = File.stat;
 
 exports.makeTree = File.mkdirs;
 exports.makeDirectory = File.mkdir;
+
+exports.open = File.open;
