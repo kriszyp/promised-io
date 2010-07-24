@@ -2,7 +2,13 @@ var File = require("file"),
     defer = require("./promise").defer;
 exports.readFileSync = exports.read = File.read;
 exports.writeFileSync = exports.write = File.write;
-exports.statSync = File.stat;
+exports.stat = exports.statSync = function(path) {
+    var stat = File.stat.apply(null, arguments);
+    stat.isFile = function() {
+        return File.isFile(path);
+    }
+    return stat;
+}
 
 exports.makeTree = File.mkdirs;
 exports.makeDirectory = File.mkdir;
