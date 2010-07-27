@@ -1,48 +1,38 @@
 /**
 * HTTP Client using the JSGI standard objects
 */
+var LazyArray = require("promised-io/lazy-array").LazyArray;
+
 // configurable proxy server setting, defaults to http_proxy env var
 exports.proxyServer = require("./process").env.http_proxy;
 
 exports.request = function(request){
 	var uri = new java.net.URL(request.uri),
 		connection = uri.openConnection(),
-		method = request.method || "GET";
-		
+		method = request.method || "GET",
+		is = null;
+	
+	for (var header in this.headers) {
+		var value = this.headers[header];
+		connection.addRequestProperty(String(header), String(value));
+	}
+	connection.setDoInput(true);
+	connection.setRequestMethod(method);
 	if (request.body && typeof request.body.forEach === "function") {
-		if (!request.method) method = "POST";
-		var writer = new java.io.OutputStreamWriter(conn.getOutputStream());
+		connection.setDoOutput(true);
+		var writer = new java.io.OutputStreamWriter(connection.getOutputStream());
 		request.body.forEach(function(chunk) {
 			writer.write(chunk);
 			writer.flush();
 		});
 	}
 	
-	connection.setDoInput(true);
-	connection.setRequestMethod(method);
-	for (var header in this.headers) {
-		var value = this.headers[header];
-		connection.addRequestProperty(String(header), String(value));
-	}
-	
-	var input = null;
 	try {
-		if (request.body) {
-			connection.setDoOutput(true);
-			var os = connection.getOutputStream();
-			request.body.forEach(function(part){
-				os.write(java.lang.String(part).toBytes("UTF-8"));
-			});
-			os.close();
-		}
 		connection.connect();
-		input = connection.getInputStream();
-	} catch (e) {
-		// HttpUrlConnection will throw FileNotFoundException on 404 errors. FIXME: others?
-		if (e.javaException instanceof java.io.FileNotFoundException)
-			input = connection.getErrorStream();
-		else
-			throw e;
+		is = connection.getInputStream();
+	}
+	catch (e) {
+		is = connection.getErrorStream();
 	}
 	
 	var status = Number(connection.getResponseCode()),
@@ -66,9 +56,11 @@ exports.request = function(request){
 		}
 	}
 	
-	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(input)),
+	// FIXME bytestrings?
+	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(is)),
 		builder = new java.lang.StringBuilder(),
 		line;
+	// FIXME create deferred and LazyArray
 	while((line = reader.readLine()) != null){
 		builder.append(line + '\n');
 	}
@@ -79,5 +71,5 @@ exports.request = function(request){
 		status: status,
 		headers: headers,
 		body: [builder.toString()]
-	};
-};
+	}
+}
