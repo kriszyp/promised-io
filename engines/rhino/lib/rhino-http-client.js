@@ -73,13 +73,12 @@ exports.request = function(request){
 				}
 				reader.close();
 				bodyDeferred.resolve();
-				return bodyDeferred.promise;
 			}
 			catch (e) {
-				print('dddddddd', e)
 				bodyDeferred.reject(e);
 				reader.close();
 			}
+			return bodyDeferred.promise;
 		}
 	});
 	
