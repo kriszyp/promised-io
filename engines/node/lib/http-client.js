@@ -11,8 +11,8 @@ var defer = require("../../../lib/promise").defer,
 exports.proxyServer = require("../../../lib/process").env.http_proxy;
 
 exports.request = function(request){
-	if(request.uri){
-		var parsed = parse(request.uri);
+	if(request.url){
+		var parsed = parse(request.url);
 		if (!parsed.pathname) parsed.pathInfo = "/";
 		for(var i in parsed){
 			request[i] = parsed[i];
@@ -20,7 +20,7 @@ exports.request = function(request){
 	}
 	var deferred = defer();
 	if(exports.proxyServer){
-		request.pathname = request.uri;
+		request.pathname = request.url;
 		var proxySettings = parse(exports.proxyServer);
 		request.port = proxySettings.port; 
 		request.host = proxySettings.hostname;
