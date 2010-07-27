@@ -1,7 +1,9 @@
 /**
 * HTTP Client using the JSGI standard objects
 */
-var LazyArray = require("promised-io/lazy-array").LazyArray;
+
+var defer = require("../../../lib/promise").defer;
+	LazyArray = require("../../../lib/lazy-array").LazyArray;
 
 // configurable proxy server setting, defaults to http_proxy env var
 exports.proxyServer = require("./process").env.http_proxy;
@@ -26,6 +28,7 @@ exports.request = function(request){
 			writer.flush();
 		});
 	}
+	if (typeof writer !== "undefined") writer.close();
 	
 	try {
 		connection.connect();
@@ -56,20 +59,35 @@ exports.request = function(request){
 		}
 	}
 	
-	// FIXME bytestrings?
+	// TODO bytestrings?
 	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(is)),
-		builder = new java.lang.StringBuilder(),
-		line;
-	// FIXME create deferred and LazyArray
-	while((line = reader.readLine()) != null){
-		builder.append(line + '\n');
-	}
-	if (typeof writer !== "undefined") writer.close();
-	reader.close();
+		deferred = defer(),
+		bodyDeferred = defer();
 	
-	return {
+	var body = LazyArray({
+		some: function(write) {
+			try {
+				var line;
+				while((line = reader.readLine()) != null){
+					write(line + "\r\n");
+				}
+				reader.close();
+				bodyDeferred.resolve();
+				return bodyDeferred.promise;
+			}
+			catch (e) {
+				print('dddddddd', e)
+				bodyDeferred.reject(e);
+				reader.close();
+			}
+		}
+	});
+	
+	deferred.resolve({
 		status: status,
 		headers: headers,
-		body: [builder.toString()]
-	}
-}
+		body: body
+	});
+	
+	return deferred.promise;
+};
