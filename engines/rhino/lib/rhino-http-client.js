@@ -7,8 +7,8 @@ var LazyArray = require("promised-io/lazy-array").LazyArray;
 exports.proxyServer = require("./process").env.http_proxy;
 
 exports.request = function(request){
-	var uri = new java.net.URL(request.uri),
-		connection = uri.openConnection(),
+	var url = new java.net.URL(request.url),
+		connection = url.openConnection(),
 		method = request.method || "GET",
 		is = null;
 	
