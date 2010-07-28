@@ -86,7 +86,7 @@ exports.request = function(request){
 				reader.close();
 			}
 			// FIXME why doesn't this work?!
-			// if (promised) return bodyDeferred.promise;
+			if (promised) return bodyDeferred.promise;
 		}
 	});
 	
