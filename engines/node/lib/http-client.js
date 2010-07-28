@@ -26,7 +26,7 @@ exports.request = function(request){
 		request.host = proxySettings.hostname;
 	}
 	
-	var client = http.createClient(request.port || 80, request.host);
+	var client = http.createClient(request.port || 80, request.hostname);
 
 	var req = client.request(request.method || "GET", request.pathname || request.pathInfo, request.headers || {host: request.hostname});
 	var timedOut;
