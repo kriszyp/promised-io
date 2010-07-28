@@ -15,7 +15,7 @@ exports.request = function(originalRequest){
 	var request = {};
 	for(var key in originalRequest){
 		if(originalRequest.hasOwnProperty(key)){
-			request[key] = soriginalRequest[key];
+			request[key] = originalRequest[key];
 		}
 	}
 	
