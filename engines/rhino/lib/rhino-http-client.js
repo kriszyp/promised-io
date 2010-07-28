@@ -1,64 +1,75 @@
 /**
 * HTTP Client using the JSGI standard objects
 */
+var LazyArray = require("promised-io/lazy-array").LazyArray;
+
 // configurable proxy server setting, defaults to http_proxy env var
-exports.proxyServer = require("./system").env.http_proxy;
+exports.proxyServer = require("./process").env.http_proxy;
 
 exports.request = function(request){
 	var url = new java.net.URL(request.url),
-		connection = url.openConnection();
-	connection.setDoInput(true);
-	connection.setRequestMethod(request.method);
-
+		connection = url.openConnection(),
+		method = request.method || "GET",
+		is = null;
+	
 	for (var header in this.headers) {
 		var value = this.headers[header];
 		connection.addRequestProperty(String(header), String(value));
 	}
-
-    var input = null;
-    try {
-    	if (request.body) {
-			connection.setDoOutput(true);
-			var os = connection.getOutputStream();
-			request.body.forEach(function(part){
-				os.write(java.lang.String(part).toBytes("UTF-8"));
-			});
-			os.close();
-    	}
-    
-        connection.connect();
-		var input = new java.io.InputStreamReader(connection.getInputStream(), "UTF-8");
-    } catch (e) {
-        // HttpUrlConnection will throw FileNotFoundException on 404 errors. FIXME: others?
-        if (e.javaException instanceof java.io.FileNotFoundException)
-            is = connection.getErrorStream();
-        else
-            throw e;
-    }
-
-    var status = Number(connection.getResponseCode());
-	var headers = {};
-    for (var i = 0;; i++) {
-        var key = connection.getHeaderFieldKey(i),
-            value = connection.getHeaderField(i);
-        if (!key && !value)
-            break;
-        // returns the HTTP status code with no key, ignore it.
-        if (key)
-            headers[String(key).toLowerCase()] = String(value);
-    }
-    var body = [];
-    var cbuf = new java.lang["char"](1024);
-    var read = 0;
-	while(read > -1){
-		read = reader.read(cbuf,0,1024);
-		if(read > -1){
-			body.push(new java.lang.String(cbuf));
+	connection.setDoInput(true);
+	connection.setRequestMethod(method);
+	if (request.body && typeof request.body.forEach === "function") {
+		connection.setDoOutput(true);
+		var writer = new java.io.OutputStreamWriter(connection.getOutputStream());
+		request.body.forEach(function(chunk) {
+			writer.write(chunk);
+			writer.flush();
+		});
+	}
+	
+	try {
+		connection.connect();
+		is = connection.getInputStream();
+	}
+	catch (e) {
+		is = connection.getErrorStream();
+	}
+	
+	var status = Number(connection.getResponseCode()),
+		headers = {};
+	for (var i = 0;; i++) {
+		var key = connection.getHeaderFieldKey(i),
+			value = connection.getHeaderField(i);
+		if (!key && !value)
+			break;
+		// returns the HTTP status code with no key, ignore it.
+		if (key) {
+			key = String(key).toLowerCase();
+			value = String(value);
+			if (headers[key]) {
+				if (!Array.isArray(headers[key])) headers[key] = [headers[key]];
+				headers[key].push(value);
+			}
+			else {
+				headers[key] = value;
+			}
 		}
 	}
+	
+	// FIXME bytestrings?
+	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(is)),
+		builder = new java.lang.StringBuilder(),
+		line;
+	// FIXME create deferred and LazyArray
+	while((line = reader.readLine()) != null){
+		builder.append(line + '\n');
+	}
+	if (typeof writer !== "undefined") writer.close();
+	reader.close();
+	
 	return {
 		status: status,
 		headers: headers,
-		body: body
-	};
-};
+		body: [builder.toString()]
+	}
+}
