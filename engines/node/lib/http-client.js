@@ -21,7 +21,12 @@ exports.request = function(originalRequest){
 	
 	if(request.url){
 		var parsed = parse(request.url);
-		if (!parsed.pathname) parsed.pathInfo = "/";
+		if (parsed.pathname) {
+			parsed.pathInfo = parsed.pathname;
+		} else {
+			parsed.pathInfo = "/";
+		}
+		request.queryString = parsed.query || "";
 		for(var i in parsed){
 			request[i] = parsed[i];
 		}
@@ -36,7 +41,12 @@ exports.request = function(originalRequest){
 	
 	var client = http.createClient(request.port || 80, request.hostname);
 
-	var req = client.request(request.method || "GET", request.pathname || request.pathInfo, request.headers || {host: request.hostname});
+	var requestPath = request.pathInfo;
+	if (request.queryString) {
+	  requestPath += "?"+request.queryString;
+	}
+
+	var req = client.request(request.method || "GET", requestPath, request.headers || {host: request.hostname});
 	var timedOut;
 	req.addListener("response", function (response){
 		if(timedOut){
