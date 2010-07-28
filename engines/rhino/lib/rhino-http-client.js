@@ -1,7 +1,9 @@
 /**
 * HTTP Client using the JSGI standard objects
 */
-var LazyArray = require("promised-io/lazy-array").LazyArray;
+
+var defer = require("../../../lib/promise").defer;
+	LazyArray = require("../../../lib/lazy-array").LazyArray;
 
 // configurable proxy server setting, defaults to http_proxy env var
 exports.proxyServer = require("./process").env.http_proxy;
@@ -10,7 +12,10 @@ exports.request = function(request){
 	var url = new java.net.URL(request.url),
 		connection = url.openConnection(),
 		method = request.method || "GET",
-		is = null;
+		is = null,
+		promised = true;
+	
+	if (request.jsgi && "async" in request.jsgi) promised = request.jsgi.async;
 	
 	for (var header in this.headers) {
 		var value = this.headers[header];
@@ -26,6 +31,7 @@ exports.request = function(request){
 			writer.flush();
 		});
 	}
+	if (typeof writer !== "undefined") writer.close();
 	
 	try {
 		connection.connect();
@@ -56,20 +62,35 @@ exports.request = function(request){
 		}
 	}
 	
-	// FIXME bytestrings?
+	// TODO bytestrings?
 	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(is)),
-		builder = new java.lang.StringBuilder(),
-		line;
-	// FIXME create deferred and LazyArray
-	while((line = reader.readLine()) != null){
-		builder.append(line + '\n');
-	}
-	if (typeof writer !== "undefined") writer.close();
-	reader.close();
+		deferred = defer(),
+		bodyDeferred = defer(),
+		response = {
+			status: status,
+			headers: headers
+		}
 	
-	return {
-		status: status,
-		headers: headers,
-		body: [builder.toString()]
-	}
-}
+	response.body = LazyArray({
+		some: function(write) {
+			try {
+				var line;
+				while((line = reader.readLine()) != null){
+					write(line + "\r\n");
+				}
+				reader.close();
+				bodyDeferred.resolve();
+			}
+			catch (e) {
+				bodyDeferred.reject(e);
+				reader.close();
+			}
+			// FIXME why doesn't this work?!
+			if (promised) return bodyDeferred.promise;
+		}
+	});
+	
+	deferred.resolve(response);
+	if (promised) return deferred.promise;
+	return response;
+};

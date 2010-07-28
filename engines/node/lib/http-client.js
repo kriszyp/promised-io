@@ -10,7 +10,15 @@ var defer = require("../../../lib/promise").defer,
 // configurable proxy server setting, defaults to http_proxy env var
 exports.proxyServer = require("../../../lib/process").env.http_proxy;
 
-exports.request = function(request){
+exports.request = function(originalRequest){
+	// make a shallow copy of original request object
+	var request = {};
+	for(var key in originalRequest){
+		if(originalRequest.hasOwnProperty(key)){
+			request[key] = soriginalRequest[key];
+		}
+	}
+	
 	if(request.url){
 		var parsed = parse(request.url);
 		if (!parsed.pathname) parsed.pathInfo = "/";
@@ -26,7 +34,7 @@ exports.request = function(request){
 		request.host = proxySettings.hostname;
 	}
 	
-	var client = http.createClient(request.port || 80, request.host);
+	var client = http.createClient(request.port || 80, request.hostname);
 
 	var req = client.request(request.method || "GET", request.pathname || request.pathInfo, request.headers || {host: request.hostname});
 	var timedOut;
