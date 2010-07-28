@@ -12,7 +12,10 @@ exports.request = function(request){
 	var url = new java.net.URL(request.url),
 		connection = url.openConnection(),
 		method = request.method || "GET",
-		is = null;
+		is = null,
+		promised = true;
+	
+	if (request.jsgi && "async" in request.jsgi) promised = request.jsgi.async;
 	
 	for (var header in this.headers) {
 		var value = this.headers[header];
@@ -62,9 +65,13 @@ exports.request = function(request){
 	// TODO bytestrings?
 	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(is)),
 		deferred = defer(),
-		bodyDeferred = defer();
+		bodyDeferred = defer(),
+		response = {
+			status: status,
+			headers: headers
+		}
 	
-	var body = LazyArray({
+	response.body = LazyArray({
 		some: function(write) {
 			try {
 				var line;
@@ -78,15 +85,12 @@ exports.request = function(request){
 				bodyDeferred.reject(e);
 				reader.close();
 			}
-			return bodyDeferred.promise;
+			// FIXME why doesn't this work?!
+			// if (promised) return bodyDeferred.promise;
 		}
 	});
 	
-	deferred.resolve({
-		status: status,
-		headers: headers,
-		body: body
-	});
-	
-	return deferred.promise;
+	deferred.resolve(response);
+	if (promised) return deferred.promise;
+	return response;
 };
