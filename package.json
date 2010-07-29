@@ -2,7 +2,10 @@
 	"name": "promised-io",
 	"author": "Kris Zyp",
 	"dependencies": [],
-	"contributors": [],
+	"contributors": [
+		"Dean Landolt <dean@deanlandolt.com",
+		"Nathan Stott <nathan.stott@whiteboard-it.com>"
+	],
 	"version": "0.0.1",
 	"keywords": [
 		"promise",
