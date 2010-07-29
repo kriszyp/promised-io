@@ -2,8 +2,7 @@
 * HTTP Client using the JSGI standard objects
 */
 
-var defer = require("../../../lib/promise").defer;
-	LazyArray = require("../../../lib/lazy-array").LazyArray;
+var LazyArray = require("../../../lib/lazy-array").LazyArray;
 
 // configurable proxy server setting, defaults to http_proxy env var
 exports.proxyServer = require("./process").env.http_proxy;
@@ -21,6 +20,7 @@ exports.request = function(request){
 		var value = this.headers[header];
 		connection.addRequestProperty(String(header), String(value));
 	}
+	connection.setFollowRedirects(false)
 	connection.setDoInput(true);
 	connection.setRequestMethod(method);
 	if (request.body && typeof request.body.forEach === "function") {
@@ -62,35 +62,23 @@ exports.request = function(request){
 		}
 	}
 	
-	// TODO bytestrings?
 	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(is)),
-		deferred = defer(),
-		bodyDeferred = defer(),
-		response = {
-			status: status,
-			headers: headers
-		}
-	
-	response.body = LazyArray({
-		some: function(write) {
-			try {
-				var line;
-				while((line = reader.readLine()) != null){
-					write(line + "\r\n");
-				}
-				reader.close();
-				bodyDeferred.resolve();
+		builder = new java.lang.StringBuilder(),
+		line;
+	// FIXME create deferred and LazyArray
+	while((line = reader.readLine()) != null){
+		builder.append(line + '\n');
+	}
+	if (typeof writer !== "undefined") writer.close();
+	reader.close();
+
+	return {
+		status: status,
+		headers: headers,
+		body: LazyArray({
+			some: function(write) {
+				write(builder.toString());
 			}
-			catch (e) {
-				bodyDeferred.reject(e);
-				reader.close();
-			}
-			// FIXME why doesn't this work?!
-			if (promised) return bodyDeferred.promise;
-		}
-	});
-	
-	deferred.resolve(response);
-	if (promised) return deferred.promise;
-	return response;
+		})
+	}
 };
