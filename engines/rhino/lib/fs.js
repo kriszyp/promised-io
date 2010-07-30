@@ -1,4 +1,5 @@
 var File = require("file"),
+	LazyArray = require("./lazy-array").LazyArray,
     defer = require("./promise").defer;
 exports.readFileSync = exports.read = File.read;
 exports.writeFileSync = exports.write = File.write;
@@ -13,8 +14,26 @@ exports.stat = exports.statSync = function(path) {
 exports.makeTree = File.mkdirs;
 exports.makeDirectory = File.mkdir;
 
-exports.open = File.open;
-
+exports.open = function(){
+	var file = File.open.apply(this, arguments);
+	var array = LazyArray({
+		some: function(callback){
+			while(true){
+				var buffer = file.read(4096);
+				if(buffer.length <= 0){
+					return;
+				}
+				if(callback(buffer)){
+					return;
+				}
+			}
+		}
+	});
+	for(var i in array){
+		file[i] = array[i];
+	}
+	return file;
+}
 exports.createWriteStream = function(path, options) {
     options = options || {};
     options.flags = options.flags || "w";
