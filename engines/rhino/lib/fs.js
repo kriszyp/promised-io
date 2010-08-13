@@ -49,7 +49,9 @@ exports.open = function(){
 		file[i] = array[i];
 	}
 	return file;
-}
+};
+exports.openSync = exports.open;
+
 exports.createWriteStream = function(path, options) {
     options = options || {};
     options.flags = options.flags || "w";
