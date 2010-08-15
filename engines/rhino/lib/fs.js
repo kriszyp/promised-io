@@ -1,12 +1,28 @@
 var File = require("file"),
 	LazyArray = require("./lazy-array").LazyArray,
     defer = require("./promise").defer;
-exports.readFileSync = exports.read = File.read;
-exports.writeFileSync = exports.write = File.write;
+for(var i in File){
+	exports[i] = File[i];
+}
+exports.readFileSync = File.read;
+exports.writeFileSync = File.write;
+exports.mkdirSync = File.mkdir;
+exports.readdir = exports.list;
 exports.stat = exports.statSync = function(path) {
-    var stat = File.stat.apply(null, arguments);
+	try{
+	    var stat = File.stat.apply(null, arguments);
+	}catch(e){
+    	var deferred = defer();
+    	deferred.reject(e);
+    	return deferred.promise;
+	}
     stat.isFile = function() {
         return File.isFile(path);
+    }
+    if(!stat.mtime){
+    	var deferred = defer();
+    	deferred.reject("File not found");
+    	return deferred.promise;
     }
     return stat;
 }
