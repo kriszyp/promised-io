@@ -41,7 +41,7 @@ exports.request = function(originalRequest){
 	
 	var client = http.createClient(request.port || 80, request.hostname);
 
-	var requestPath = request.pathInfo;
+	var requestPath = request.pathInfo || "";
 	if (request.queryString) {
 	  requestPath += "?"+request.queryString;
 	}
