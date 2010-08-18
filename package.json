@@ -19,6 +19,11 @@
 		"npm": {
 			"main": "./lib/fs",
 			"directories": { "lib": "./lib" }
+		},
+		"narwhal": {
+			"mappings": {
+				"fs": "../engines/rhino/lib/fs.js"
+			}
 		}
 	}
 }
