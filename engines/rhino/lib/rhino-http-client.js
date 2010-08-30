@@ -5,7 +5,7 @@
 var LazyArray = require("../../../lib/lazy-array").LazyArray;
 
 // configurable proxy server setting, defaults to http_proxy env var
-exports.proxyServer = require("./process").env.http_proxy;
+exports.proxyServer = require("../../../lib/process").env.http_proxy;
 
 exports.request = function(request){
 	var url = new java.net.URL(request.url),

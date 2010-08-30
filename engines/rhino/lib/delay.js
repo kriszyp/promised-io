@@ -1,8 +1,8 @@
 /*
  * Provides time-based promise-returning delay and schedule functions for Rhino
  */
-var defer = require("./promise").defer,
-	LazyArray = require("./lazy-array").LazyArray;
+var defer = require("../../../lib/promise").defer,
+	LazyArray = require("../../../lib/lazy-array").LazyArray;
 // returns a promise that is fulfilled after the given number of milliseconds
 exports.delay = function(ms){
 	var deferred = defer();
