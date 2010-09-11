@@ -12,7 +12,10 @@
 	],
 	"engines": {"node":">=0.1.30", "rhino": true},
 	"githubName": "promised-io",
-	"type": "zip",
+	"mappings": {
+		"patr": "http://github.com/kriszyp/patr/zipball/v0.2.1"
+	},
+
 	"location": "http://github.com/kriszyp/promised-io/zipball/master",
 	"overlay": {
 		"npm": {
