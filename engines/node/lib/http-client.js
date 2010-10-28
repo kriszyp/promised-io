@@ -36,7 +36,7 @@ exports.request = function(originalRequest){
 		request.pathname = request.url;
 		var proxySettings = parse(exports.proxyServer);
 		request.port = proxySettings.port; 
-		request.host = proxySettings.hostname;
+		request.hostname = proxySettings.hostname;
 	}
 	
 	var client = http.createClient(request.port || 80, request.hostname);
@@ -46,9 +46,10 @@ exports.request = function(originalRequest){
 	  requestPath += "?"+request.queryString;
 	}
 
-	var req = client.request(request.method || "GET", requestPath, request.headers || {host: request.hostname});
+	var req = client.request(request.method || "GET", requestPath, request.headers || {host: request.host});
 	var timedOut;
-	req.addListener("response", function (response){
+	req.end();
+	req.on("response", function (response){
 		if(timedOut){
 			return;
 		}
@@ -65,17 +66,15 @@ exports.request = function(originalRequest){
 				return bodyDeferred.promise;
 			}
 		});
-		if(request.encoding){
-			response.setEncoding(request.encoding);
-		}
+		response.setEncoding(request.encoding || "utf8");
 
-		response.addListener("data", function (chunk) {
+		response.on("data", function (chunk) {
 			sendData(chunk);
 		});
-		response.addListener("end", function(){
+		response.on("end", function(){
 			bodyDeferred.resolve();
 		});
-		response.addListener("error", function(error){
+		response.on("error", function(error){
 			bodyDeferred.reject(error);
 		});
 		deferred.resolve(response);
@@ -85,13 +84,13 @@ exports.request = function(originalRequest){
 		timedOut = true;
 		deferred.reject(new Error("Timeout"));
 	}, 20000);
-	req.addListener("error", function(error){
+	req.on("error", function(error){
 		deferred.reject(error);
 	});
-	req.addListener("timeout", function(error){
+	req.on("timeout", function(error){
 		deferred.reject(error);
 	});
-	req.addListener("close", function(error){
+	req.on("close", function(error){
 		deferred.reject(error);
 	});
 	if(request.body){

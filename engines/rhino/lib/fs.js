@@ -1,9 +1,16 @@
+// -- kriskowal Kris Kowal Copyright (C) 2009-2010 MIT License
+// -- tlrobinson Tom Robinson
+// -- tolmasky Francisco Tolmasky
+// -- dangoor Kevin Dangoor
+
+
 var File = require("file"),
 	LazyArray = require("../../../lib/lazy-array").LazyArray,
     defer = require("../../../lib/promise").defer;
 for(var i in File){
 	exports[i] = File[i];
 }
+
 exports.readFileSync = File.read;
 exports.writeFileSync = File.write;
 exports.mkdirSync = File.mkdir;
@@ -31,7 +38,7 @@ exports.makeTree = File.mkdirs;
 exports.makeDirectory = File.mkdir;
 
 exports.open = function(){
-	var file = File.open.apply(this, arguments);
+	var file = FileIO(this, arguments);
 	var array = LazyArray({
 		some: function(callback){
 			while(true){
