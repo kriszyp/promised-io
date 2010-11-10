@@ -39,7 +39,8 @@ exports.request = function(originalRequest){
 		request.hostname = proxySettings.hostname;
 	}
 	
-	var client = http.createClient(request.port || 80, request.hostname);
+	var secure = request.protocol.indexOf("s") > -1;
+	var client = http.createClient(request.port || (secure ? 443 : 80), request.hostname, secure);
 
 	var requestPath = request.pathInfo || "";
 	if (request.queryString) {
