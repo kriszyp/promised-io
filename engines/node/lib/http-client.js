@@ -36,13 +36,14 @@ exports.request = function(originalRequest){
 		request.pathname = request.url;
 		var proxySettings = parse(exports.proxyServer);
 		request.port = proxySettings.port; 
+		request.protocol = proxySettings.protocol;
 		request.hostname = proxySettings.hostname;
 	}
 	
 	var secure = request.protocol.indexOf("s") > -1;
 	var client = http.createClient(request.port || (secure ? 443 : 80), request.hostname, secure);
 
-	var requestPath = request.pathInfo || "";
+	var requestPath = request.pathname || request.pathInfo || "";
 	if (request.queryString) {
 	  requestPath += "?"+request.queryString;
 	}
