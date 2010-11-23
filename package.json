@@ -1,31 +1,39 @@
 {
-	"name": "promised-io",
-	"author": "Kris Zyp",
-	"dependencies": [],
-	"contributors": [
-		"Dean Landolt <dean@deanlandolt.com",
-		"Nathan Stott <nathan.stott@whiteboard-it.com>"
-	],
-	"keywords": [
-		"promise",
-		"io"
-	],
-	"engines": {"node":">=0.1.30", "rhino": true},
-	"githubName": "promised-io",
-	"mappings": {
-		"patr": "http://github.com/kriszyp/patr/zipball/v0.2.1"
-	},
-
-	"location": "http://github.com/kriszyp/promised-io/zipball/master",
-	"overlay": {
-		"npm": {
-			"main": "./lib/fs",
-			"directories": { "lib": "./lib" }
-		},
-		"narwhal": {
-			"mappings": {
-				"fs": "../engines/rhino/lib/fs.js"
-			}
-		}
-	}
+  "name": "promised-io",
+  "version": "0.2.2",
+  "author": {
+    "name": "Kris Zyp"
+  },
+  "description": "Promise-based IO",
+  "licenses": [
+     {
+         "type": "AFLv2.1",
+         "url": "http://trac.dojotoolkit.org/browser/dojo/trunk/LICENSE#L43"
+     },
+     {
+         "type": "BSD",
+         "url": "http://trac.dojotoolkit.org/browser/dojo/trunk/LICENSE#L13"
+     }
+  ],
+  "repository": {
+    "type":"git",
+    "url":"http://github.com/kriszyp/promised-io"
+  },
+  "contributors": [
+    "Dean Landolt <dean@deanlandolt.com",
+    "Nathan Stott <nathan.stott@whiteboard-it.com>"
+  ],
+  "keywords": [
+    "promise",
+    "io"
+  ],
+  "mappings": {
+    "patr": "http://github.com/kriszyp/patr/zipball/v0.2.1"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "dependencies":{
+    "patr": ">=0.2.1"
+  }
 }
