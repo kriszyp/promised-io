@@ -48,7 +48,7 @@ exports.request = function(originalRequest){
 	  requestPath += "?"+request.queryString;
 	}
 
-	var req = client.request(request.method || "GET", requestPath, request.headers || {host: request.host});
+	var req = client.request(request.method || "GET", requestPath, request.headers || {host: request.hostname});
 	var timedOut;
 	req.end();
 	req.on("response", function (response){
