@@ -48,7 +48,8 @@ exports.request = function(originalRequest){
 	  requestPath += "?"+request.queryString;
 	}
 
-	var req = client.request(request.method || "GET", requestPath, request.headers || {host: request.hostname});
+	var req = client.request(request.method || "GET", requestPath, request.headers || 
+		{host: request.host || request.hostname + (request.port ? ":" + request.port : "")});
 	var timedOut;
 	req.end();
 	req.on("response", function (response){
