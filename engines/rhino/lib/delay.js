@@ -47,13 +47,21 @@ var _scheduleTimeout = function(callback, delay, repeat)
 
     timer = timer || new java.util.Timer("JavaScript timer thread", true);
     queue = queue || require("event-loop");
+    var lastFinished = true;
     var task = timeout.task = new java.util.TimerTask({
         run: function(){
-            queue.enqueue(function(){
-                if(!timeout.cancelled){ // check to make sure it wasn't enqueued and then later cancelled
-                    func();
-                }
-            });
+        	if(lastFinished){
+	        	lastFinished = false;
+	            queue.enqueue(function(){
+	                if(!timeout.cancelled){ // check to make sure it wasn't enqueued and then later cancelled
+		            	try{
+		                    func();
+		            	}finally{
+		                	lastFinished = true;
+		            	}
+	                }
+	            });
+        	}
         }
     });
     delay = Math.floor(delay);
