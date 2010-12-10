@@ -42,6 +42,22 @@ exports.request = function(originalRequest){
 	
 	var secure = request.protocol.indexOf("s") > -1;
 	var client = http.createClient(request.port || (secure ? 443 : 80), request.hostname, secure);
+	var timedOut, bodyDeferred;
+	client.on("error", function(error){
+		if(bodyDeferred){
+			bodyDeferred.reject(error);
+		}else{
+			deferred.reject(error);
+		}
+		clearTimeout(timeout);
+	});
+	// Limits the time of sending the request + receiving the response header to 20 seconds.
+	// No timeout is used on the client stream, but we do destroy the stream if a timeout is reached.
+	var timeout = setTimeout(function(){
+		timedOut = true;
+		client.destroy();
+		deferred.reject(new Error("Timeout"));
+	}, 20000);
 
 	var requestPath = request.pathname || request.pathInfo || "";
 	if (request.queryString) {
@@ -50,7 +66,6 @@ exports.request = function(originalRequest){
 
 	var req = client.request(request.method || "GET", requestPath, request.headers || 
 		{host: request.host || request.hostname + (request.port ? ":" + request.port : "")});
-	var timedOut;
 	req.on("response", function (response){
 		if(timedOut){
 			return;
@@ -60,7 +75,7 @@ exports.request = function(originalRequest){
 			buffer.push(block);
 		};
 		var buffer = [];
-		var bodyDeferred = defer();
+		bodyDeferred = defer();
 		var body = response.body = LazyArray({
 			some: function(callback){
 				buffer.forEach(callback);
@@ -75,25 +90,11 @@ exports.request = function(originalRequest){
 		});
 		response.on("end", function(){
 			bodyDeferred.resolve();
-		});
-		response.on("error", function(error){
-			bodyDeferred.reject(error);
+			// Since we have no connection pooling, let's not pretend to use Keep-Alive
+			client.end();
 		});
 		deferred.resolve(response);
 		clearTimeout(timeout);
-	});
-	var timeout = setTimeout(function(){
-		timedOut = true;
-		deferred.reject(new Error("Timeout"));
-	}, 20000);
-	req.on("error", function(error){
-		deferred.reject(error);
-	});
-	req.on("timeout", function(error){
-		deferred.reject(error);
-	});
-	req.on("close", function(error){
-		deferred.reject(error);
 	});
 	if(request.body){
 		return when(request.body.forEach(function(block){
