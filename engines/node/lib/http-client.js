@@ -51,7 +51,6 @@ exports.request = function(originalRequest){
 	var req = client.request(request.method || "GET", requestPath, request.headers || 
 		{host: request.host || request.hostname + (request.port ? ":" + request.port : "")});
 	var timedOut;
-	req.end();
 	req.on("response", function (response){
 		if(timedOut){
 			return;
@@ -103,7 +102,8 @@ exports.request = function(originalRequest){
 			req.end();
 			return deferred.promise;
 		});
+	}else{
+		req.end();
+		return deferred.promise;
 	}
-	req.end();
-	return deferred.promise;
 };
