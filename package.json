@@ -22,7 +22,8 @@
   "contributors": [
     "Dean Landolt <dean@deanlandolt.com",
     "Nathan Stott <nathan.stott@whiteboard-it.com>",
-    "Mark Wubben <mark@novemberborn.net>"
+    "Mark Wubben <mark@novemberborn.net>",
+    "Vladimir Dronnikov <dronnikov@gmail.com>"
   ],
   "keywords": [
     "promise",
