@@ -1,6 +1,6 @@
 {
   "name": "promised-io",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": {
     "name": "Kris Zyp"
   },
@@ -30,12 +30,12 @@
     "io"
   ],
   "mappings": {
-    "patr": "http://github.com/kriszyp/patr/zipball/v0.2.1"
+    "patr": "http://github.com/kriszyp/patr/zipball/v0.2.5"
   },
   "directories": {
     "lib": "./lib"
   },
   "dependencies":{
-    "patr": ">=0.2.1"
+    "patr": ">=0.2.5"
   }
 }
