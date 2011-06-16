@@ -1,8 +1,8 @@
 var assert = require("assert"),
-	when = require("../lib/promise").when,
-	whenPromise = require("../lib/promise").whenPromise,
-	defer = require("../lib/promise").defer,
-	Step = require("../lib/step").Step;
+	when = require("../promise").when,
+	whenPromise = require("../promise").whenPromise,
+	defer = require("../promise").defer,
+	Step = require("../step").Step;
 
 exports.testSpeedPlainValue = function(){
 	for(var i = 0; i < 1000; i++){

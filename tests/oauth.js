@@ -1,7 +1,7 @@
 var vows = require("vows"),
 		assert = require("assert"),
-		oauth = require("../lib/oauth"),
-		querystring = require("../lib/util/querystring");
+		oauth = require("../oauth"),
+		querystring = require("../util/querystring");
 
 vows.describe("OAuth").addBatch({
 	"When generating the signature base string described in <http://oauth.net/core/1.0/#sig_base_example>": {

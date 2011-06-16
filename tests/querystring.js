@@ -1,6 +1,6 @@
 var vows = require("vows"),
 		assert = require("assert"),
-		querystring = require("../lib/util/querystring");
+		querystring = require("../util/querystring");
 
 vows.describe("util/querystring").addBatch({
 	"When munging array parameters": {

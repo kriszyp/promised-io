@@ -3,7 +3,7 @@
 */
 
 if (typeof system === "object" && system.engine === "rhino"){
-	var fs = require("../engines/rhino/lib/fs");
+	var fs = require("./engines/rhino/fs");
 	
 	// for rhino
 	for(var i in fs){

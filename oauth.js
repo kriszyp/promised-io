@@ -121,7 +121,7 @@ Client.prototype.request = function(originalRequest){
 		}
 	}
 	
-	// Normalize the request. `engines/node/lib/http-client.request` is
+	// Normalize the request. `engines/node/http-client.request` is
 	// quite flexible, but this should do it.
 	if(request.url){
 		var parsed = parseUrl(request.url);
@@ -143,7 +143,7 @@ Client.prototype.request = function(originalRequest){
 	for(var h in originalRequest.headers){
 		request.headers[h] = originalRequest.headers[h];
 	}
-	// We'll be setting the Authorization header; due to how `engines/node/lib/http-client.request`
+	// We'll be setting the Authorization header; due to how `engines/node/http-client.request`
 	// is implemented we need to set the Host header as well.
 	request.headers.host = request.headers.host || request.hostname + (request.port ? ":" + request.port : "");
 	

@@ -1,14 +1,15 @@
 /**
 * HTTP Client using the JSGI standard objects
 */
-var defer = require("../../../lib/promise").defer,
-	when = require("../../../lib/promise").when,
-	LazyArray = require("../../../lib/lazy-array").LazyArray,
+var defer = require("../../../promise").defer,
+	when = require("../../../promise").when,
+	LazyArray = require("../../../lazy-array").LazyArray,
 	http = require("http"),
+	https = require("https"),
 	parse = require("url").parse;
 
 // configurable proxy server setting, defaults to http_proxy env var
-exports.proxyServer = require("../../../lib/process").env.http_proxy;
+exports.proxyServer = require("../../../process").env.http_proxy;
 
 exports.request = function(originalRequest){
 	// make a shallow copy of original request object
@@ -39,18 +40,10 @@ exports.request = function(originalRequest){
 		request.protocol = proxySettings.protocol;
 		request.hostname = proxySettings.hostname;
 	}
-	
-	var secure = request.protocol.indexOf("s") > -1;
-	var client = http.createClient(request.port || (secure ? 443 : 80), request.hostname, secure);
+	if(!request.protocol){
+		throw new Error("No valid protocol/URL provided");
+	}
 	var timedOut, bodyDeferred;
-	client.on("error", function(error){
-		if(bodyDeferred){
-			bodyDeferred.reject(error);
-		}else{
-			deferred.reject(error);
-		}
-		clearTimeout(timeout);
-	});
 	// Limits the time of sending the request + receiving the response header to 20 seconds.
 	// No timeout is used on the client stream, but we do destroy the stream if a timeout is reached.
 	var timeout = setTimeout(function(){
@@ -59,13 +52,18 @@ exports.request = function(originalRequest){
 		deferred.reject(new Error("Timeout"));
 	}, 20000);
 
-	var requestPath = request.pathname || request.pathInfo || "";
+	var secure = request.protocol.indexOf("s") > -1;
+	request.port = request.port || (secure ? 443 : 80);
+	request.headers = request.headers || {host: request.host || request.hostname + (request.port ? ":" + request.port : "")};
+	request.host = request.hostname;
+	request.method = request.method || "GET";
+	request.path = request.pathname || request.pathInfo || "";
 	if (request.queryString) {
-	  requestPath += "?"+request.queryString;
+	  request.path += "?"+request.queryString;
 	}
+	var timedOut;
 
-	var req = client.request(request.method || "GET", requestPath, request.headers || 
-		{host: request.host || request.hostname + (request.port ? ":" + request.port : "")});
+	var req = (secure ? https : http).request(request);
 	req.on("response", function (response){
 		if(timedOut){
 			return;

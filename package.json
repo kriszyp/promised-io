@@ -33,8 +33,9 @@
     "patr": "http://github.com/kriszyp/patr/zipball/v0.2.5"
   },
   "directories": {
-    "lib": "./lib"
+    "lib": "."
   },
+  "main": "./promise",
   "dependencies":{
     "patr": ">=0.2.5"
   }

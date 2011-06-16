@@ -5,7 +5,7 @@
 define(function(require){
 if (typeof system === "object" && system.engine === "rhino"){
 	// for rhino
-	return require("../engines/rhino/lib/delay");
+	return require("./engines/rhino/delay");
 }
 var defer = require("./promise").defer,
 	LazyArray = require("./lazy-array").LazyArray;
