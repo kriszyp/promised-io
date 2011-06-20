@@ -1,6 +1,6 @@
 var File = require("file"),
-	LazyArray = require("../../../lazy-array").LazyArray,
-    defer = require("../../../promise").defer;
+	LazyArray = require("../../lazy-array").LazyArray,
+    defer = require("../../promise").defer;
 for(var i in File){
 	exports[i] = File[i];
 }

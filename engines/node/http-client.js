@@ -1,15 +1,15 @@
 /**
 * HTTP Client using the JSGI standard objects
 */
-var defer = require("../../../promise").defer,
-	when = require("../../../promise").when,
-	LazyArray = require("../../../lazy-array").LazyArray,
+var defer = require("../../promise").defer,
+	when = require("../../promise").when,
+	LazyArray = require("../../lazy-array").LazyArray,
 	http = require("http"),
 	https = require("https"),
 	parse = require("url").parse;
 
 // configurable proxy server setting, defaults to http_proxy env var
-exports.proxyServer = require("../../../process").env.http_proxy;
+exports.proxyServer = require("../../process").env.http_proxy;
 
 exports.request = function(originalRequest){
 	// make a shallow copy of original request object
