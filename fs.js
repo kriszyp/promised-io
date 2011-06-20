@@ -95,6 +95,12 @@ function File(fd){
 	file.close = function(){
 		return exports.close(file);
 	}
+	file.writeSync = function(contents, options, encoding){
+		return exports.writeSync(file.fd, contents, options, encoding);
+	}
+	file.closeSync = function(){
+		return exports.closeSync(file.fd);
+	}
 	return file;
 }
 File.prototype = LazyArray.prototype;
