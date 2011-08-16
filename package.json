@@ -36,7 +36,7 @@
     "lib": "."
   },
   "main": "./promise",
-  "dependencies":{
+  "testDependencies":{
     "patr": ">=0.2.5"
   }
 }
