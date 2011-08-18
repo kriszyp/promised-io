@@ -36,7 +36,8 @@
     "lib": "."
   },
   "main": "./promise",
-  "testDependencies":{
-    "patr": ">=0.2.5"
+  "devDependencies":{
+    "patr": ">=0.2.5",
+    "vows": ">=0.5.10"
   }
 }
