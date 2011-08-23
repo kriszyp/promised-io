@@ -94,6 +94,9 @@ exports.request = function(originalRequest){
 		deferred.resolve(response);
 		clearTimeout(timeout);
 	});
+	req.on('error', function(e) {
+		deferred.reject(e);
+	});
 	if(request.body){
 		return when(request.body.forEach(function(block){
 			req.write(block);
