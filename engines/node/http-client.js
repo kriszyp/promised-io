@@ -20,6 +20,7 @@ exports.request = function(originalRequest){
 		}
 	}
 	
+	if(request.timeout === undefined)request.timeout= 20000; // default timeout.
 	if(request.url){
 		var parsed = parse(request.url);
 		if (parsed.pathname) {
@@ -50,7 +51,7 @@ exports.request = function(originalRequest){
 		timedOut = true;
 		client.destroy();
 		deferred.reject(new Error("Timeout"));
-	}, 20000);
+	}, request.timeout);
 
 	var secure = request.protocol.indexOf("s") > -1;
 	request.port = request.port || (secure ? 443 : 80);
