@@ -10,7 +10,7 @@ var defer = promise.defer,
 	request;
 	
 if(typeof XMLHttpRequest === "undefined"){
-	request = require("./engines/node/http-client").request;
+	request = require("../engines/node/lib/http-client").request;
 }
 else{
 request = function(request){
@@ -114,7 +114,9 @@ request.CookieJar = function(nextApp) {
     
     if (req.hostname && domainToCookies[req.hostname]) {
       var cookieString = "";
-      req.headers["Cookie"] = querystring.toQueryString(domainToCookies[req.hostname]);
+      req.headers["Cookie"] = domainToCookies[req.hostname].map(function(cookie) {
+        return querystring.toQueryString(cookie);
+      }).join(',');
     }
     
     return when(nextApp(req), function(response) {
@@ -122,12 +124,28 @@ request.CookieJar = function(nextApp) {
       if (response.headers["set-cookie"]) {
         var path, domain = req.hostname + (req.port ? ":"+req.port : "");
         
-        cookies = querystring.parseQuery(response.headers["set-cookie"], /[;,]/g);
-        if (cookies.Version !== undefined) { delete cookies.Version; }
-        if (cookies.Path !== undefined) { path = cookies.Path; delete cookies.Path; }
-        if (cookies.HttpOnly !== undefined) { delete cookies.HttpOnly; }
-        if (cookies.Domain !== undefined) { domain = cookies.Domain; delete cookies.Domain; }
-        
+        if (Array.isArray(response.headers["set-cookie"])) {
+            cookies = [];
+
+            response.headers["set-cookie"].forEach(function(cookie) {
+                cookie = querystring.parseQuery(cookie, /[;,]/g);
+                if (cookie.Version !== undefined) { delete cookie.Version; }
+                if (cookie.Path !== undefined) { path = cookie.Path; delete cookie.Path; }
+                if (cookie.HttpOnly !== undefined) { delete cookie.HttpOnly; }
+                if (cookie.Domain !== undefined) { domain = cookie.Domain; delete cookie.Domain; }
+
+                cookies.push(cookie);
+            });
+        } else {
+            cookies = querystring.parseQuery(response.headers["set-cookie"], /[;,]/g);
+            if (cookies.Version !== undefined) { delete cookies.Version; }
+            if (cookies.Path !== undefined) { path = cookies.Path; delete cookies.Path; }
+            if (cookies.HttpOnly !== undefined) { delete cookies.HttpOnly; }
+            if (cookies.Domain !== undefined) { domain = cookies.Domain; delete cookies.Domain; }
+
+            cookies = [ cookies ];
+        }
+
         for (var k in cookies) {
           if (Array.isArray(cookies[k])) {
             cookies[k] = cookies[k][0];
