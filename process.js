@@ -23,8 +23,12 @@ if(typeof process !== "undefined"){
 	}
 }
 else if(typeof navigator === "undefined"){
-	exports.args = require("" + "system").args;
-	exports.env = require("" + "system").env;
+	try{
+		exports.args = require("" + "system").args;
+		exports.env = require("" + "system").env;
+	}catch(e){
+		// in raw rhino, we don't even have system
+	}
 	exports.print = print;
 }
 });

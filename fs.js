@@ -2,7 +2,7 @@
 * Node fs module that returns promises
 */
 
-if (typeof system === "object" && system.engine === "rhino"){
+if (typeof java === "object"){
 	var fs = require("./engines/rhino/fs");
 	
 	// for rhino

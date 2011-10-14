@@ -1,4 +1,4 @@
-var File = require("file"),
+var File = require("fs"),
 	LazyArray = require("../../lazy-array").LazyArray,
     defer = require("../../promise").defer;
 for(var i in File){
@@ -10,8 +10,15 @@ exports.writeFileSync = File.write;
 exports.mkdirSync = File.mkdir;
 exports.readdir = exports.list;
 exports.stat = exports.statSync = function(path) {
-	try{
-	    var stat = File.stat.apply(null, arguments);
+	return {
+		isFile: function(){
+			return File.isFile(path);
+		},
+		size: File.size(path)
+	};
+	
+	/*try{
+	   var stat = File.stat.apply(null, arguments);
 	}catch(e){
     	var deferred = defer();
     	deferred.reject(e);
@@ -25,7 +32,7 @@ exports.stat = exports.statSync = function(path) {
     	deferred.reject("File not found");
     	return deferred.promise;
     }
-    return stat;
+    return stat;*/
 }
 
 exports.makeTree = File.mkdirs;

@@ -1,4 +1,4 @@
-({define:typeof define!="undefined"?define:function(deps, factory){module.exports = factory.apply(this, deps.map(require))}}).
+({define:typeof define!="undefined"?define:function(deps, factory){module.exports = factory.apply(this, deps.map(function(id){require(id)}))}}).
 define(["./promise"], function(promise){
 try{
 	var when = promise.when;
@@ -32,10 +32,10 @@ exports.get = function(array, index){
 	});
 };
 
-
 var testProto = {};
-var testProto2 = testProto.__proto__ = testProto2; 
-var mutableProto = testProto.__proto__ === testProto2;
+var testProto2 = {a:"b"};
+testProto.__proto__ = testProto2; 
+var mutableProto = testProto.a == "b";
 function SomeWrapper(hasSomeAndLength){
 	if(mutableProto){
 		hasSomeAndLength.source = hasSomeAndLength;
