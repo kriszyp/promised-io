@@ -10,30 +10,19 @@ exports.writeFileSync = File.write;
 exports.mkdirSync = File.mkdir;
 exports.readdir = exports.list;
 exports.stat = exports.statSync = function(path) {
-	return {
-		isFile: function(){
-			return File.isFile(path);
-		},
-		size: File.size(path)
-	};
-	
-	/*try{
-	   var stat = File.stat.apply(null, arguments);
+	try{
+		return {
+			isFile: function(){
+				return File.isFile(path);
+			},
+			size: File.size(path)
+		};
 	}catch(e){
     	var deferred = defer();
     	deferred.reject(e);
     	return deferred.promise;
 	}
-    stat.isFile = function() {
-        return File.isFile(path);
-    }
-    if(!stat.mtime){
-    	var deferred = defer();
-    	deferred.reject("File not found");
-    	return deferred.promise;
-    }
-    return stat;*/
-}
+};
 
 exports.makeTree = File.mkdirs;
 exports.makeDirectory = File.mkdir;
