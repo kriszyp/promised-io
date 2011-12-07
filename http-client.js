@@ -10,7 +10,7 @@ var defer = promise.defer,
 	request;
 	
 if(typeof XMLHttpRequest === "undefined"){
-	request = require("./engines/node/lib/http-client").request;
+	request = require("./engines/node/http-client").request;
 }
 else{
 request = function(request){
