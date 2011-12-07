@@ -138,8 +138,20 @@ function defer(){
 	return new Deferred();
 } 
 
-// this can be set to other values
-exports.currentContext = null;
+
+// currentContext can be set to other values
+// and mirrors the global. We need to go off the global in case of multiple instances
+// of this module, which isn't rare with NPM's package policy.
+Object.defineProperty && Object.defineProperty(exports, "currentContext", {
+	set: function(value){
+		currentContext = value;
+	},
+	get: function(){
+		return currentContext;
+	}
+});
+exports.currentContext = null; 
+
 
 function Deferred(canceller){
 	var result, finished, isError, waiting = [], handled;
