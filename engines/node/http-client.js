@@ -89,8 +89,6 @@ exports.request = function(originalRequest){
 		});
 		response.on("end", function(){
 			bodyDeferred.resolve();
-			// Since we have no connection pooling, let's not pretend to use Keep-Alive
-			client.end();
 		});
 		deferred.resolve(response);
 		clearTimeout(timeout);
