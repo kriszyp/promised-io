@@ -24,6 +24,19 @@ then() method that can take a callback. The then() methods definition is:
 Promises can originate from a variety of sources, and promised-io provides a constructor, Deferred,
 to create promises.
 
+### when
+
+	when = require("promised-io/promise");
+	when(promiseOrValue, fulfilledHandler, errorHandler);
+	
+You can pass a promise to the when() function and the fulfillment and error handlers will be registered for it's
+completion *or* you can pass a regular value, and the fulfillment handler will be 
+immediately be called. The when function is a staple of working with promises because
+it allows you to write code that normalizes interaction with synchronous values and asynchronous promises.
+If you pass in a promise, a new promise for the result of execution of the callback handler
+will be returned. If you pass a normal value, the return value will be the value returned
+from the fulfilledHandler.
+
 ### Deferred
 
 	deferred = require("promised-io/promise").Deferred(canceler);
@@ -95,7 +108,57 @@ asynchronous operations. The promise module tracks the "currentContext" global v
 and whatever value that was in the variable at the time a promise was created
 will be restored when that promise is fulfilled (or rejected). 
 
-### 
+### all
+
+	group = require("promised-io/promise").all(arrayOfPromises);
+
+The all() function can be passed an array of promises, or multiple promises as individual
+arguments, and all() will return a new promise that represents the completed values when all the promises
+have been fulfilled. This allows you to easily run multiple asynchronous actions, and wait
+for the completion ("join") of all the actions. For example:
+ 
+	group = all(promise1, promise2, promise3);
+	group.then(function(array){
+		var value1 = array[0]; // result of promise1
+		var value2 = array[1]; // result of promise2
+		var value3 = array[2]; // result of promise3
+	});
+
+### first
+
+	first = require("promised-io/promise").first(arrayOfPromises);
+
+The first() function can be passed an array of promises, or multiple promises as individual
+arguments, and first() will return a new promise that represents the completed value when the first promise
+is fulfilled. This allows you to run multiple asynchronous actions get the first result. For example:
+ 
+	response = first(requestToMainSite, requestToMirrorSite1, requestToMirrorSite2);
+	response.then(function(response){
+		// response from the first site to respond
+	});
+
+### seq
+
+	result = require("promised-io/promise").seq(arrayOfActionFunctions, startingValue);
+
+The seq() function can be passed an array of functions, and seq() will execute each function
+in sequence, waiting for the promise returned from each one to complete before executing
+the next function. Each function will be called with the result of the last function (or the
+startingValue for the first function).
+
+### whenPromise
+
+	resultPromise = require("promised-io/promise").whenPromise(valueOrPromise, fulfillmentHandler, errorHandler); 
+
+The whenPromise() function behaves exactly like when() except that whenPromise
+will always return a promise, even if a non-promise value is passed in.
+
+### allKeys
+
+	group = require("promised-io/promise").allKeys(hashOfPromises);
+
+Takes a hash of promises and returns a promise that is fulfilled once all the promises in the hash keys are fulfilled.
+
 
 Promised-IO is part of the Persevere project, and therefore is licensed under the
 AFL or BSD license. The Persevere project is administered under the Dojo foundation,
