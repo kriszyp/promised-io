@@ -159,6 +159,115 @@ will always return a promise, even if a non-promise value is passed in.
 
 Takes a hash of promises and returns a promise that is fulfilled once all the promises in the hash keys are fulfilled.
 
+## fs
+	
+This module provides promise-based access to the filesystem. The API of the fs module
+basically follows the [Node File System module API](http://nodejs.org/docs/latest/api/fs.html).
+Each of the asynchronous functions in the Node's FS API is reflected with a corresponding 
+function in the fs module that returns a promise (instead of requiring a callback argument in the initial call).
+For example, where Node has fs.rename(path1, path2, [callback]), with promised-io
+you would call it:
+
+	var fs = require("promised-io/fs").fs;
+	fs.rename(path1, path2).then(function(){
+		// finished renaming
+	}); 
+
+One function that does differ from NodeJS's fs module is the open() function.
+
+### open
+
+	var file = require("promised-io/fs").open(path, mode);
+
+The open() function differs from simply being a promise-based version of the Node's
+open() function in that it immediately returns (even though the opening of the
+file is asynchronous) a file object that be used to read from and write to the file.
+
+To write to the file object, we can write:
+
+	promiseForCompletion = file.write(contents, options, encoding);
+
+To close the file object, we can write:
+
+	promiseForCompletion = file.close();
+
+We can also use file.writeSync and file.closeSync for the synchronous versions of these
+functions.
+
+The file object is also a lazy array, which means you can read from the file using 
+standard array methods. To asynchronously read the contents of a file, you can do:
+ 
+	file.forEach(function(chunk){
+		// called for each chunk of the file until the end of the file is reached.
+	});
+
+## lazy-array
+
+The lazy-array module provides the functionality for creating and using lazy arrays,
+which are objects that implement the interface of the standard iterative array methods for accessing
+streams of data. Array methods can be called and they will be
+asynchronously executed as data is available. Lazy arrays are powerful way to model
+asynchronous streams since they can used like other JavaScript arrays.
+
+Typically you don't need to directly use this module, rather other IO modules like the 
+file system (fs) and HTTP (http-client) modules provide lazy arrays that you can interact
+with. For example, we could search through a file for the string "lazy" and stop reading
+once we find it using the standard some() method:
+
+	if(file.some(function(chunk){
+		return chunk.toString().indexOf("lazy") > -1;
+	}));
+
+Lazy arrays include the follow standard array methods, providing access to the data
+as the stream data becomes available:
+
+* filter
+* every
+* some
+* forEach
+* concat
+* map
+
+And also these standard methods, although these must fully fetch the stream:
+
+* join
+* sort
+* reverse
+
+Also the following additional methods are available on lazy arrays:
+
+* toRealArray() - This will fetch all the data and return it as a real JavaScript array.
+* get(index) - This retrieves an element by index.
+
+### LazyArray
+
+	lazyArray = require("promised-io/lazy-array").LazyArray({
+		some: someImplementation,
+		length: arrayLength
+	});
+
+This function is a constructor for creating your own lazy arrays. With this function,
+you don't need to implement the entire set of array methods, you can just implement
+the some() method and provide an array length, if it is known.
+
+### first
+
+	first = require("promised-io/lazy-array").first(lazyArray);
+	
+This function returns the first element in a lazy array.
+
+### last
+
+	last = require("promised-io/lazy-array").last(lazyArray);
+	
+This function returns the last element in a lazy array.
+
+### get
+
+	item = require("promised-io/lazy-array").get(index);
+	
+This function returns the an element by index from a lazy array.
+
 
 Promised-IO is part of the Persevere project, and therefore is licensed under the
 AFL or BSD license. The Persevere project is administered under the Dojo foundation,
