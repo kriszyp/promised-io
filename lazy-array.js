@@ -1,8 +1,9 @@
-({define:typeof define!="undefined"?define:function(deps, factory){module.exports = factory.apply(this, deps.map(function(id){require(id)}))}}).
+({define:typeof define!="undefined"?define:function(deps, factory){module.exports = factory.apply(this, deps.map(function(id){return require(id)}))}}).
 define(["./promise"], function(promise){
 try{
 	var when = promise.when;
 }catch(e){
+	console.log("couldn't load promise library", e.stack);
 	when = function(value, callback){
 		return callback(value);
 	}
