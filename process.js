@@ -9,18 +9,8 @@ if(typeof process !== "undefined"){
 	exports.args = process.argv;
 	exports.env = process.env;	
 	var sys = require("" + "sys");
-	exports.print = function() {
-	    var buffer = [];
-	    for (var i = 0, length = arguments.length; i < length; i++) {
-    	    var arg = arguments[i];
-    	    if (arg) buffer.push(arg);
-	    }
-	    sys.puts(buffer.join(" "));
-	}
-	exports.dir = function(){
-		for(var i=0,l=arguments.length;i<l;i++)
-			sys.debug(sys.inspect(arguments[i]));
-	}
+	exports.print = console.log;
+	exports.dir = console.dir;
 }
 else if(typeof navigator === "undefined"){
 	try{
