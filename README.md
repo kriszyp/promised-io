@@ -9,9 +9,7 @@ actions or for streaming of data. Lazy arrays provide all the standard iterative
 receiving callbacks as actions are completed. Lazy arrays are utilized
 for progressive loading of files and HTTP responses.
 
-# Modules
-
-## promise
+# promise
 
 The promise module provides the primary tools for creating new promises and interacting
 with promises. The promise API used by promised-io is the [Promises/A](http://wiki.commonjs.org/wiki/Promises/A)
@@ -24,7 +22,7 @@ then() method that can take a callback. The then() methods definition is:
 Promises can originate from a variety of sources, and promised-io provides a constructor, Deferred,
 to create promises.
 
-### when
+## when
 
 	when = require("promised-io/promise");
 	when(promiseOrValue, fulfilledHandler, errorHandler);
@@ -37,7 +35,7 @@ If you pass in a promise, a new promise for the result of execution of the callb
 will be returned. If you pass a normal value, the return value will be the value returned
 from the fulfilledHandler.
 
-### Deferred
+## Deferred
 
 	deferred = require("promised-io/promise").Deferred(canceler);
 
@@ -66,33 +64,33 @@ Deferred will be canceled and the canceler function will be called.
 
 The Deferred object has the following methods and properties:
 
-#### fulfill
+### fulfill
 
     deferred.fulfill(value);
 
 This will fulfill the Deferred's promise with the provided value. The fulfillment listeners to the promise
 will be notified.
 
-#### reject
+### reject
 
     deferred.reject(error);
 
 This will reject the Deferred's promise with the provided error. The error listeners to the promise
 will be notified.
 
-#### promise
+### promise
 
 This is the promise object associated with the Deferred instance. The promise object 
 will not have any of the Deferred's fulfill or reject methods, and only provides an interface
 for listening. This can be safely provided to consumers without any chance of being modified.
 
-#### cancel
+### cancel
 
     deferred.cancel();
 
 This will cancel the Deferred.
  
-### currentContext
+## currentContext
 
 One of the challenges with working asynchronous code is that there can be times when
 you wish for some contextual state information to be preserved across multiple
@@ -108,7 +106,7 @@ asynchronous operations. The promise module tracks the "currentContext" global v
 and whatever value that was in the variable at the time a promise was created
 will be restored when that promise is fulfilled (or rejected). 
 
-### all
+## all
 
 	group = require("promised-io/promise").all(arrayOfPromises);
 
@@ -124,7 +122,7 @@ for the completion ("join") of all the actions. For example:
 		var value3 = array[2]; // result of promise3
 	});
 
-### first
+## first
 
 	first = require("promised-io/promise").first(arrayOfPromises);
 
@@ -137,7 +135,7 @@ is fulfilled. This allows you to run multiple asynchronous actions get the first
 		// response from the first site to respond
 	});
 
-### seq
+## seq
 
 	result = require("promised-io/promise").seq(arrayOfActionFunctions, startingValue);
 
@@ -146,20 +144,20 @@ in sequence, waiting for the promise returned from each one to complete before e
 the next function. Each function will be called with the result of the last function (or the
 startingValue for the first function).
 
-### whenPromise
+## whenPromise
 
 	resultPromise = require("promised-io/promise").whenPromise(valueOrPromise, fulfillmentHandler, errorHandler); 
 
 The whenPromise() function behaves exactly like when() except that whenPromise
 will always return a promise, even if a non-promise value is passed in.
 
-### allKeys
+## allKeys
 
 	group = require("promised-io/promise").allKeys(hashOfPromises);
 
 Takes a hash of promises and returns a promise that is fulfilled once all the promises in the hash keys are fulfilled.
 
-## fs
+# fs
 	
 This module provides promise-based access to the filesystem. The API of the fs module
 basically follows the [Node File System module API](http://nodejs.org/docs/latest/api/fs.html).
@@ -175,7 +173,7 @@ you would call it:
 
 One function that does differ from NodeJS's fs module is the open() function.
 
-### open
+## open
 
 	var file = require("promised-io/fs").open(path, mode);
 
@@ -201,7 +199,7 @@ standard array methods. To asynchronously read the contents of a file, you can d
 		// called for each chunk of the file until the end of the file is reached.
 	});
 
-## lazy-array
+# lazy-array
 
 The lazy-array module provides the functionality for creating and using lazy arrays,
 which are objects that implement the interface of the standard iterative array methods for accessing
@@ -239,7 +237,7 @@ Also the following additional methods are available on lazy arrays:
 * toRealArray() - This will fetch all the data and return it as a real JavaScript array.
 * get(index) - This retrieves an element by index.
 
-### LazyArray
+## LazyArray
 
 	lazyArray = require("promised-io/lazy-array").LazyArray({
 		some: someImplementation,
@@ -250,24 +248,27 @@ This function is a constructor for creating your own lazy arrays. With this func
 you don't need to implement the entire set of array methods, you can just implement
 the some() method and provide an array length, if it is known.
 
-### first
+## first
 
 	first = require("promised-io/lazy-array").first(lazyArray);
 	
 This function returns the first element in a lazy array.
 
-### last
+## last
 
 	last = require("promised-io/lazy-array").last(lazyArray);
 	
 This function returns the last element in a lazy array.
 
-### get
+## get
 
 	item = require("promised-io/lazy-array").get(index);
 	
 This function returns the an element by index from a lazy array.
 
+# http-client
+
+This module provides convenient promise-based access to making HTTP requests.
 
 Promised-IO is part of the Persevere project, and therefore is licensed under the
 AFL or BSD license. The Persevere project is administered under the Dojo foundation,
