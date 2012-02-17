@@ -1,5 +1,5 @@
 ({define:typeof define!="undefined"?define:function(deps, factory){factory(require,exports)}}).
-define([], function(req,exports){
+define(function(req,exports){
 if(typeof console !== "undefined"){
 	exports.print = function(){
 		console.log.apply(console, arguments);
