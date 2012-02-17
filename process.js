@@ -1,4 +1,4 @@
-({define:typeof define!="undefined"?define:function(deps, factory){factory(require,exports)}}).
+({define:typeof define!="undefined"?define:function(factory){factory(require,exports)}}).
 define(function(req,exports){
 if(typeof console !== "undefined"){
 	exports.print = function(){
