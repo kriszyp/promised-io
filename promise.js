@@ -566,7 +566,9 @@ exports.seq = function(array, startingValue){
 	function next(value){
 		var nextAction = array.shift();
 		if(nextAction){
-			exports.when(nextAction(value), next, deferred.reject);
+			exports.when(nextAction(value), next, function(error){
+			  deferred.reject(error, true);
+			});
 		}
 		else {
 			deferred.resolve(value);
