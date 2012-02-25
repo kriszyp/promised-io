@@ -52,7 +52,7 @@ usage pattern looks like:
     	setTimeout(function(){
     		// fulfill the deferred/promise, all listeners to the promise will be notified, and 
     		// provided the value as the value of the promise 
-    		deferred.fulfill(value);
+    		deferred.resolve(value);
     	}, ms);
     	// return the promise that is associated with the Deferred object
     	return deferred.promise;
@@ -64,9 +64,9 @@ Deferred will be canceled and the canceler function will be called.
 
 The Deferred object has the following methods and properties:
 
-### fulfill
+### resolve
 
-    deferred.fulfill(value);
+    deferred.resolve(value);
 
 This will fulfill the Deferred's promise with the provided value. The fulfillment listeners to the promise
 will be notified.
