@@ -477,7 +477,7 @@ exports.all = function(array){
 	if(!(array instanceof Array)){
 		array = Array.prototype.slice.call(arguments);
 	}
-	var fulfilled = 0, length = array.length;
+	var fulfilled = 0, length = array.length, rejected = false;
 	var results = [];
 	if (length === 0) deferred.resolve(results);
 	else {	
@@ -487,10 +487,20 @@ exports.all = function(array){
 					results[index] = value;
 					fulfilled++;
 					if(fulfilled === length){
-						deferred.resolve(results);
+						if(!rejected){
+							 deferred.resolve(results);
+						} else {
+							 deferred.reject(rejected);
+						}
 					}
 				},
-				deferred.reject);
+				function(error){
+					fulfilled++;
+					rejected = error;
+					if(fulfilled === length){
+						 deferred.reject(error);
+					}
+				});
 		});
 	}
 	return deferred.promise;

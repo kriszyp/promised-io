@@ -1,4 +1,5 @@
 var assert = require("assert"),
+	all = require("../promise").all,
 	when = require("../promise").when,
 	whenPromise = require("../promise").whenPromise,
 	defer = require("../promise").defer,
@@ -32,6 +33,22 @@ exports.testWhenPromiseRejectHandled = function(){
 		})());
 	}).then(null, function(){});
 };
+
+exports.testMultipleReject = function(){
+	all(delayedFail(25), delayedFail(50)).then(function () {
+		throw new Error('There should be no success here.');
+	}, function () {
+		// This is where we want to end up, once only.
+	});
+};
+
+function delayedFail(delay) {
+	var deferred = defer();
+	setTimeout(function () {
+		deferred.reject(new Error());
+	}, delay);
+	return deferred.promise;
+}
 
 function veryDeferred(){
 	var deferred = defer();
