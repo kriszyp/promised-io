@@ -35,17 +35,25 @@ exports.testWhenPromiseRejectHandled = function(){
 };
 
 exports.testMultipleReject = function(){
-	all(delayedFail(25), delayedFail(50)).then(function () {
+	all(delayedFail(25), delayedFail(50), delayedSuccess(75)).then(function () {
 		throw new Error('There should be no success here.');
 	}, function () {
 		// This is where we want to end up, once only.
 	});
 };
 
+function delayedSuccess(delay) {
+	var deferred = defer();
+	setTimeout(function () {
+		deferred.resolve();
+	}, delay);
+	return deferred.promise;
+}
+
 function delayedFail(delay) {
 	var deferred = defer();
 	setTimeout(function () {
-		deferred.reject(new Error());
+		deferred.reject();
 	}, delay);
 	return deferred.promise;
 }

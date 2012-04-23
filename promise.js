@@ -487,19 +487,14 @@ exports.all = function(array){
 					results[index] = value;
 					fulfilled++;
 					if(fulfilled === length){
-						if(!rejected){
-							 deferred.resolve(results);
-						} else {
-							 deferred.reject(rejected);
-						}
+						deferred.resolve(results);
 					}
 				},
 				function(error){
-					fulfilled++;
-					rejected = error;
-					if(fulfilled === length){
+					if(!rejected){
 						 deferred.reject(error);
 					}
+					rejected = true;
 				});
 		});
 	}
