@@ -24,7 +24,7 @@ for (var i in fs) {
 		exports[i] = fs[i];
 	}
 	else{
-		exports[i] = convertNodeAsyncFunction(fs[i]);
+		exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
 	}
 }
 function File(fd){
