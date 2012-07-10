@@ -96,6 +96,7 @@ exports.request = function(originalRequest){
 	req.on('error', function(e) {
 		if (!timedOut) {
             deferred.reject(e);
+            clearTimeout(timeout);
         }
 	});
 	if(request.body){
