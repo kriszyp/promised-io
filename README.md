@@ -166,7 +166,7 @@ Takes a hash of promises and returns a promise that is fulfilled once all the pr
 # fs
 	
 This module provides promise-based access to the filesystem. The API of the fs module
-basically follows the [Node File System module API](http://nodejs.org/docs/latest/api/fs.html).
+basically follows the [Node File System module API](http://nodejs.org/api/fs.html).
 Each of the asynchronous functions in the Node's FS API is reflected with a corresponding 
 function in the fs module that returns a promise (instead of requiring a callback argument in the initial call).
 For example, where Node has fs.rename(path1, path2, [callback]), with promised-io
