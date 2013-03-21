@@ -9,6 +9,12 @@ actions or for streaming of data. Lazy arrays provide all the standard iterative
 receiving callbacks as actions are completed. Lazy arrays are utilized
 for progressive loading of files and HTTP responses.
 
+# Installation
+
+Promised-IO can be installed via npm:
+
+	npm install promised-io
+
 # promise
 
 The promise module provides the primary tools for creating new promises and interacting
@@ -219,11 +225,17 @@ once we find it using the standard some() method:
 Lazy arrays include the follow standard array methods, providing access to the data
 as the stream data becomes available:
 
+* forEach
+* concat
+
+Additional iterative methods can also access data as it available *and* as it is requested from
+the returned lazy array. This means that in order for this function to be excuted, the
+resulting array should have a forEach (or any of the other standard methods) called on 
+it to trigger the request for data. These methods follow this behavior: 
+
 * filter
 * every
 * some
-* forEach
-* concat
 * map
 
 And also these standard methods, although these must fully fetch the stream:
