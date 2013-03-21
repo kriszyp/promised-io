@@ -3,9 +3,9 @@ define(function(require,exports){
 
 // Kris Zyp
 
-// this is based on the CommonJS spec for promises: 
+// this is based on the CommonJS spec for promises:
 // http://wiki.commonjs.org/wiki/Promises
-// Includes convenience functions for promises, much of this is taken from Tyler Close's ref_send 
+// Includes convenience functions for promises, much of this is taken from Tyler Close's ref_send
 // and Kris Kowal's work on promises.
 // // MIT License
 
@@ -17,7 +17,7 @@ define(function(require,exports){
 //	Promise.resolve("succesful result");
 // });
 //	promise -> given to the consumer
-//	
+//
 //	A consumer can use the promise
 //	promise.then(function(result){
 //		... when the action is complete this is executed ...
@@ -26,7 +26,7 @@ define(function(require,exports){
 //		... executed when the promise fails
 //	});
 //
-// Alternately, a provider can create a deferred and resolve it when it completes an action. 
+// Alternately, a provider can create a deferred and resolve it when it completes an action.
 // The deferred object a promise object that provides a separation of consumer and producer to protect
 // promises from being fulfilled by untrusted code.
 // var defer = require("promise").defer;
@@ -35,7 +35,7 @@ define(function(require,exports){
 //	deferred.resolve("succesful result");
 // });
 //	deferred.promise -> given to the consumer
-//	
+//
 //	Another way that a consumer can use the promise (using promise.then is also allowed)
 // var when = require("promise").when;
 // when(promise,function(result){
@@ -45,7 +45,7 @@ define(function(require,exports){
 //		... executed when the promise fails
 //	});
 
-exports.errorTimeout = 100;	
+exports.errorTimeout = 100;
 var freeze = Object.freeze || function(){};
 
 /**
@@ -64,8 +64,8 @@ Promise.prototype.then = function(resolvedCallback, errorCallback, progressCallb
 
 /**
  * If an implementation of a promise supports a concurrency model that allows
- * execution to block until the promise is resolved, the wait function may be 
- * added. 
+ * execution to block until the promise is resolved, the wait function may be
+ * added.
  */
 /**
  * If an implementation of a promise can be cancelled, it may add this function
@@ -86,8 +86,9 @@ Promise.prototype.put = function(propertyName, value){
 };
 
 Promise.prototype.call = function(functionName /*, args */){
+	var fnArgs = Array.prototype.slice.call(arguments, 1);
 	return this.then(function(value){
-		return value[functionName].apply(value, Array.prototype.slice.call(arguments, 1));
+		return value[functionName].apply(value, fnArgs);
 	});
 };
 
@@ -136,7 +137,7 @@ Deferred.prototype = Promise.prototype;
 exports.Promise = exports.Deferred = exports.defer = defer;
 function defer(){
 	return new Deferred();
-} 
+}
 
 
 // currentContext can be set to other values
@@ -150,18 +151,18 @@ Object.defineProperty && Object.defineProperty(exports, "currentContext", {
 		return currentContext;
 	}
 });
-exports.currentContext = null; 
+exports.currentContext = null;
 
 
 function Deferred(canceller){
 	var result, finished, isError, waiting = [], handled;
 	var promise = this.promise = new Promise();
 	var context = exports.currentContext;
-	
+
 	function notifyAll(value){
 		var previousContext = exports.currentContext;
 		if(finished){
-			throw new Error("This deferred has already been resolved");				
+			throw new Error("This deferred has already been resolved");
 		}
 		try{
 			if(previousContext !== context){
@@ -176,7 +177,7 @@ function Deferred(canceller){
 			result = value;
 			finished = true;
 			for(var i = 0; i < waiting.length; i++){
-				notify(waiting[i]);	
+				notify(waiting[i]);
 			}
 		}
 		finally{
@@ -222,7 +223,7 @@ function Deferred(canceller){
 	this.resolve = this.callback = this.emitSuccess = function(value){
 		notifyAll(value);
 	};
-	
+
 	// calling error will indicate that the promise failed
 	var reject = this.reject = this.errback = this.emitError = function(error, dontThrow){
 		isError = true;
@@ -236,18 +237,18 @@ function Deferred(canceller){
 		}
 		return handled;
 	};
-	
+
 	// call progress to provide updates on the progress on the completion of the promise
 	this.progress = function(update){
 		for(var i = 0; i < waiting.length; i++){
 			var progress = waiting[i].progress;
-			progress && progress(update);	
+			progress && progress(update);
 		}
 	}
 	// provide the implementation of the promise
 	this.then = promise.then = function(resolvedCallback, errorCallback, progressCallback){
 		var returnDeferred = new Deferred(promise.cancel);
-		var listener = {resolved: resolvedCallback, error: errorCallback, progress: progressCallback, deferred: returnDeferred}; 
+		var listener = {resolved: resolvedCallback, error: errorCallback, progress: progressCallback, deferred: returnDeferred};
 		if(finished){
 			notify(listener);
 		}
@@ -276,7 +277,7 @@ function Deferred(canceller){
 			return promise;
 		};
 	}
-	
+
 	if(canceller){
 		this.cancel = promise.cancel = function(){
 			var error = canceller();
@@ -308,14 +309,14 @@ function perform(value, async, sync){
 		deferred.reject(e);
 		return deferred.promise;
 	}
-	
+
 }
 /**
  * Promise manager to make it easier to consume promises
  */
 
 function rethrow(err){ throw err; }
- 
+
 /**
  * Registers an observer on a promise, always returning a promise
  * @param value		 promise or value to observe
@@ -441,7 +442,7 @@ exports.wait = function(target){
 		throw new Error("Can not wait, the event-queue module is not available");
 	}
 	if(target && typeof target.then === "function"){
-		var isFinished, isError, result;		
+		var isFinished, isError, result;
 		target.then(function(value){
 			isFinished = true;
 			result = value;
@@ -474,15 +475,15 @@ exports.wait = function(target){
  */
 exports.all = function(array){
 	var deferred = new Deferred();
-	if(!(array instanceof Array)){
+	if(Object.prototype.toString.call(array) !== '[object Array]'){
 		array = Array.prototype.slice.call(arguments);
 	}
-	var fulfilled = 0, length = array.length;
+	var fulfilled = 0, length = array.length, rejected = false;
 	var results = [];
 	if (length === 0) deferred.resolve(results);
-	else {	
+	else {
 		array.forEach(function(promise, index){
-			exports.when(promise, 
+			exports.when(promise,
 				function(value){
 					results[index] = value;
 					fulfilled++;
@@ -490,7 +491,12 @@ exports.all = function(array){
 						deferred.resolve(results);
 					}
 				},
-				deferred.reject);
+				function(error){
+					if(!rejected){
+						 deferred.reject(error);
+					}
+					rejected = true;
+				});
 		});
 	}
 	return deferred.promise;
@@ -525,14 +531,14 @@ exports.allKeys = function(hash){
 };
 
 /**
- * Takes an array of promises and returns a promise that is fulfilled when the first 
+ * Takes an array of promises and returns a promise that is fulfilled when the first
  * promise in the array of promises is fulfilled
  * @param array	The array of promises
  * @return a promise that is fulfilled with the value of the value of first promise to be fulfilled
  */
 exports.first = function(array){
 	var deferred = new Deferred();
-	if(!(array instanceof Array)){
+	if(Object.prototype.toString.call(array) !== '[object Array]'){
 		array = Array.prototype.slice.call(arguments);
 	}
 	var fulfilled;
@@ -541,20 +547,20 @@ exports.first = function(array){
 			if (!fulfilled) {
 				fulfilled = true;
 				deferred.resolve(value);
-			}	
+			}
 		},
 		function(error){
 			if (!fulfilled) {
 				fulfilled = true;
 				deferred.resolve(error);
-			}	
+			}
 		});
 	});
 	return deferred.promise;
 };
 
 /**
- * Takes an array of asynchronous functions (that return promises) and 
+ * Takes an array of asynchronous functions (that return promises) and
  * executes them sequentially. Each funtion is called with the return value of the last function
  * @param array	The array of function
  * @param startingValue The value to pass to the first function
@@ -572,7 +578,7 @@ exports.seq = function(array, startingValue){
 		}
 		else {
 			deferred.resolve(value);
-		}	
+		}
 	}
 	next(startingValue);
 	return deferred.promise;

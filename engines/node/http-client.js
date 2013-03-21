@@ -19,7 +19,7 @@ exports.request = function(originalRequest){
 			request[key] = originalRequest[key];
 		}
 	}
-	
+
 	if(request.timeout === undefined)request.timeout= 20000; // default timeout.
 	if(request.url){
 		var parsed = parse(request.url);
@@ -37,7 +37,7 @@ exports.request = function(originalRequest){
 	if(exports.proxyServer){
 		request.pathname = request.url;
 		var proxySettings = parse(exports.proxyServer);
-		request.port = proxySettings.port; 
+		request.port = proxySettings.port;
 		request.protocol = proxySettings.protocol;
 		request.hostname = proxySettings.hostname;
 	}
@@ -49,7 +49,7 @@ exports.request = function(originalRequest){
 	// No timeout is used on the client stream, but we do destroy the stream if a timeout is reached.
 	var timeout = setTimeout(function(){
 		timedOut = true;
-		client.destroy();
+		req.destroy();
 		deferred.reject(new Error("Timeout"));
 	}, request.timeout);
 
@@ -94,7 +94,10 @@ exports.request = function(originalRequest){
 		clearTimeout(timeout);
 	});
 	req.on('error', function(e) {
-		deferred.reject(e);
+		if (!timedOut) {
+            deferred.reject(e);
+            clearTimeout(timeout);
+        }
 	});
 	if(request.body){
 		return when(request.body.forEach(function(block){
