@@ -667,9 +667,9 @@ exports.convertNodeAsyncFunction = function(asyncFunction, callbackNotDeclared){
  * Returns a promise. If the object is already a Promise it is returned; otherwise
  * the object is wrapped in a Promise.
  * @param value	 The value to be treated as a Promise
- * @return A promise wrapping the original value0
+ * @return A promise wrapping the original value
  */
-exports.asPromise = function(value){
+exports.as = function(value){
 	if (value instanceof Promise) {
 		return value;
 	} else {

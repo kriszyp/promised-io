@@ -3,7 +3,7 @@ var assert = require("assert"),
 	when = require("../promise").when,
 	whenPromise = require("../promise").whenPromise,
 	defer = require("../promise").defer,
-	asPromise = require("../promise").asPromise
+	Promise = require("../promise"),
 	Step = require("../step").Step;
 
 exports.testSpeedPlainValue = function(){
@@ -113,24 +113,25 @@ exports.testStep = function(){
 };
 
 exports.testAsValue = function (){
-	var deferred = asPromise("supercala");
+	var deferred = Promise.as("supercala");
 	deferred.then(function (res) {
 		assert.ok(res == "supercala");
 	}, function () {
 		throw new Error("Unexpected error");
 	});
-}
+};
 
 exports.testAsPromise = function (){
 	var temp = defer();
 	temp.resolve("supercala");
-	var deferred = asPromise(temp);
+	var deferred = Promise.as(temp);
+	assert.ok(temp === deferred);
 	deferred.then(function (res) {
 		assert.ok(res == "supercala");
 	}, function () {
 		throw new Error("Unexpected error");
 	});
-}
+};
 
 if (require.main === module)
     require("patr/runner").run(exports);
