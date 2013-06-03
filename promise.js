@@ -662,5 +662,21 @@ exports.convertNodeAsyncFunction = function(asyncFunction, callbackNotDeclared){
 		return deferred.promise;
 	};
 };
+
+/**
+ * Returns a promise. If the object is already a Promise it is returned; otherwise
+ * the object is wrapped in a Promise.
+ * @param value	 The value to be treated as a Promise
+ * @return A promise wrapping the original value
+ */
+exports.as = function(value){
+	if (value instanceof Promise) {
+		return value;
+	} else {
+		var ret = defer();
+		ret.resolve(value);
+		return ret;
+	}
+};
 });
 })(typeof define!="undefined"?define:function(factory){factory(require,exports)});
