@@ -172,10 +172,19 @@ function in the fs module that returns a promise (instead of requiring a callbac
 For example, where Node has fs.rename(path1, path2, [callback]), with promised-io
 you would call it:
 
-	var fs = require("promised-io/fs").fs;
+	var fs = require("promised-io/fs");
 	fs.rename(path1, path2).then(function(){
 		// finished renaming
-	}); 
+	});
+
+Any callback arguments will be the same minus the error argument:
+
+	var fs = require("promised-io/fs");
+	fs.readdir(path).then(function(files){
+		// use the result
+	}, function(error) {
+		// Handle errors here instead
+	});
 
 One function that does differ from NodeJS's fs module is the open() function.
 
