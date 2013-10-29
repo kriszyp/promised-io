@@ -195,7 +195,8 @@ function Deferred(canceller){
 	function notify(listener){
 		var func = (isError ? listener.error : listener.resolved);
 		if(func){
-			handled = true;
+			handled ?
+				(handled.handled = true) : (handled = true);
 				try{
 					var newResult = func(result);
 					if(newResult && typeof newResult.then === "function"){
@@ -210,9 +211,7 @@ function Deferred(canceller){
 		}
 		else{
 			if(isError){
-				if (listener.deferred.reject(result, true)) {
-					handled = true;
-					}
+				listener.deferred.reject(result, typeof handled === "object" ? handled : (handled = {}));
 			}
 			else{
 				listener.deferred.resolve.call(listener.deferred, result);
@@ -225,15 +224,25 @@ function Deferred(canceller){
 	};
 
 	// calling error will indicate that the promise failed
-	var reject = this.reject = this.errback = this.emitError = function(error, dontThrow){
+	var reject = this.reject = this.errback = this.emitError = function(error, handledObject){
+		if (typeof handledObject == "object") {
+			if (handled) {
+				handledObject.handled = true;
+			} else {
+				handled = handledObject;
+			}
+		}
 		isError = true;
 		notifyAll(error);
-		if (!dontThrow && typeof setTimeout !== "undefined") {
-			setTimeout(function () {
-				if (!handled) {
-					throw error;
-				}
-			}, exports.errorTimeout);
+		if (!handledObject && typeof setTimeout !== "undefined") {
+			if (!(typeof handled == "object" ? handled.handled : handled)) {
+				// set the time out if it has not already been handled
+				setTimeout(function () {
+					if (!(typeof handled == "object" ? handled.handled : handled)) {
+						throw error;
+					}
+				}, exports.errorTimeout);
+			}
 		}
 		return handled;
 	};
