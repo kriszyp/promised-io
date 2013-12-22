@@ -135,8 +135,8 @@ Promise.prototype.wait = function(){
 Deferred.prototype = Promise.prototype;
 // A deferred provides an API for creating and resolving a promise.
 exports.Promise = exports.Deferred = exports.defer = defer;
-function defer(){
-	return new Deferred();
+function defer(canceller){
+	return new Deferred(canceller);
 }
 
 
