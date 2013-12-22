@@ -18,13 +18,15 @@ var fs = require("fs"),
 	when = require("./promise").when,
 	convertNodeAsyncFunction = require("./promise").convertNodeAsyncFunction;
 	
-// convert all the non-sync functions
+// convert all the non-sync functions that have a sync counterpart
 for (var i in fs) {
-	if (i.match(/Sync$/) || i.match(/watch/)) {
-		exports[i] = fs[i];
+	if ((i + 'Sync') in fs) {
+		// async
+		exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
 	}
 	else{
-		exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
+		// sync, or something that we can't auto-convert
+		exports[i] = fs[i];
 	}
 }
 function File(fd){
