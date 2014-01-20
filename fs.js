@@ -27,6 +27,9 @@ for (var i in fs) {
 		}
 		else {
 			(function(asyncFunction){
+				// This function replaces the callback with one that fakes an error parameter
+				// Because we can't assign to replacementAsyncFunction.length this assumes that
+				// the asynchronous function always has two arguments (a and b are only used for this)
 				var replacementAsyncFunction = function(a, b){
 					var callback = arguments[arguments.length - 1];
 					arguments[arguments.length - 1] = function(){
