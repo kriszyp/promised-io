@@ -33,7 +33,7 @@ for (var i in fs) {
 				var replacementAsyncFunction = function(a, b){
 					var callback = arguments[arguments.length - 1];
 					arguments[arguments.length - 1] = function(){
-						callback.apply(this, [false].concat(arguments)); // err is always false
+						callback.apply(this, [false].concat(Array.prototype.slice.call(arguments))); // err is always false
 					}
 					asyncFunction.apply(this, arguments);
 				};
