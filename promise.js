@@ -639,21 +639,6 @@ exports.execute = function(asyncFunction){
 	return deferred.promise;
 };
 
-
-var fs = require("fs");
-// Some fs functions never return an error, so in that case the first return value is the result.
-function asyncFunctionHasError(asyncFunction){
-	var functionsWithoutError = ["exists"],
-		functionName;
-	for (var i=0; i<functionsWithoutError.length; i++){
-		functionName = functionsWithoutError[i];
-		if (asyncFunction === fs[functionName]){
-			return false;
-		}
-	};
-	return true;
-}
-
 /**
  * Converts a Node async function to a promise returning function
  * @param func	 node compatible async function which takes a callback as its last argument
@@ -668,23 +653,18 @@ exports.convertNodeAsyncFunction = function(asyncFunction, callbackNotDeclared){
 		}
 		arguments.length = arity;
 		arguments[arity - 1] = function(error, result){
-			if (asyncFunctionHasError(asyncFunction)){
-				if(error) {
-					deferred.emitError(error);
-				}
-				else {
-					if(arguments.length > 2){
-						// if there are multiple success values, we return an array
-						Array.prototype.shift.call(arguments, 1);
-						deferred.emitSuccess(arguments);
-					}
-					else{
-						deferred.emitSuccess(result);
-					}
-				}
-			} 
+			if(error) {
+				deferred.emitError(error);
+			}
 			else {
-				deferred.emitSuccess(error);
+				if(arguments.length > 2){
+					// if there are multiple success values, we return an array
+					Array.prototype.shift.call(arguments, 1);
+					deferred.emitSuccess(arguments);
+				}
+				else{
+					deferred.emitSuccess(result);
+				}
 			}
 		};
 		asyncFunction.apply(this, arguments);
