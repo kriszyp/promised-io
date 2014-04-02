@@ -8,7 +8,7 @@ var defer = promise.defer,
 	when = promise.when,
 	print = process.print,
 	request;
-	
+
 if(typeof XMLHttpRequest === "undefined"){
 	request = require("./engines/node/http-client").request;
 }
@@ -19,8 +19,8 @@ request = function(request){
 	  serverName = request.serverName || request.hostname || "localhost",
 	  serverPort = request.serverPort || request.port     || 80,
 	  xhr = new XMLHttpRequest();
-	xhr.open(request.method || "GET", 
-		request.url || // allow request.url to shortcut creating a URL from all the various parts 
+	xhr.open(request.method || "GET",
+		request.url || // allow request.url to shortcut creating a URL from all the various parts
 		(scheme + "://" + serverName + ":" + serverPort + request.pathInfo + (request.queryString ? '?' + request.queryString : '')), true);
 	for(var i in request.headers){
 		xhr.setRequestHeader(i, request.headers[i]);
@@ -98,12 +98,12 @@ request.Redirect = function(nextApp, maxRedirects){
 
 request.CookieJar = function(nextApp) {
   var domainToCookies = {};
-  
+
   return function(req) {
     var
       querystring = require("./querystring"),
       parseUri    = require("./util/uri").parseUri;
-    
+
     if (req.url) {
       var url = parseUri(req.url);
       req.hostname  = url.host;
@@ -111,19 +111,19 @@ request.CookieJar = function(nextApp) {
       req.pathInfo  = url.path;
       req.authority = url.authority;
     }
-    
+
     if (req.hostname && domainToCookies[req.hostname]) {
       var cookieString = "";
       req.headers["Cookie"] = domainToCookies[req.hostname].map(function(cookie) {
         return querystring.toQueryString(cookie);
       }).join(',');
     }
-    
+
     return when(nextApp(req), function(response) {
       var cookies;
       if (response.headers["set-cookie"]) {
         var path, domain = req.hostname + (req.port ? ":"+req.port : "");
-        
+
         if (Array.isArray(response.headers["set-cookie"])) {
             cookies = [];
 
@@ -151,12 +151,12 @@ request.CookieJar = function(nextApp) {
             cookies[k] = cookies[k][0];
           }
         }
-        
+
         if (cookies) {
           domainToCookies[req.hostname] = cookies;
         }
       }
-      
+
       return response;
     });
   };
@@ -178,7 +178,7 @@ request.Client = function(options) {
 	if (redirects) {
 		this.request = request.CookieJar(request.Redirect(this.request, typeof redirects === "number" && redirects));
 	}
-	
+
 	var finalRequest = this.request;
 	this.request = function(options) {
 		if (typeof options === "string") options = {url: options};

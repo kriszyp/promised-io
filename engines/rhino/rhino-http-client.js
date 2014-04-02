@@ -13,9 +13,9 @@ exports.request = function(request){
 		method = request.method || "GET",
 		is = null,
 		promised = true;
-	
+
 	if (request.jsgi && "async" in request.jsgi) promised = request.jsgi.async;
-	
+
 	for (var header in this.headers) {
 		var value = this.headers[header];
 		connection.addRequestProperty(String(header), String(value));
@@ -32,7 +32,7 @@ exports.request = function(request){
 		});
 	}
 	if (typeof writer !== "undefined") writer.close();
-	
+
 	try {
 		connection.connect();
 		is = connection.getInputStream();
@@ -40,7 +40,7 @@ exports.request = function(request){
 	catch (e) {
 		is = connection.getErrorStream();
 	}
-	
+
 	var status = Number(connection.getResponseCode()),
 		headers = {};
 	for (var i = 0;; i++) {
@@ -61,7 +61,7 @@ exports.request = function(request){
 			}
 		}
 	}
-	
+
 	var reader = new java.io.BufferedReader(new java.io.InputStreamReader(is)),
 		builder = new java.lang.StringBuilder(),
 		line;

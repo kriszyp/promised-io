@@ -1,5 +1,5 @@
 /**
- * AOP style event handling, for listening for method calls. Very similar to dojo.connect 
+ * AOP style event handling, for listening for method calls. Very similar to dojo.connect
 
 /* Add a listener for the execution of the given function slot on the given object.
  *
@@ -89,6 +89,6 @@ exports.observe = function(object, eventName, listener, before) {
 	    			afters.splice(afters.indexOf(listenerProxy), 1);
 	    		}
 	    	}
-    	}; 
+    	};
     };
 };

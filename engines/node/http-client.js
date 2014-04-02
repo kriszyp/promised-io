@@ -60,7 +60,7 @@ exports.request = function(originalRequest){
 	request.method = request.method || "GET";
 	request.path = request.pathname || request.pathInfo || "";
 	if (request.queryString) {
-	  request.path += "?"+request.queryString;
+		request.path += "?"+request.queryString;
 	}
 	var timedOut;
 

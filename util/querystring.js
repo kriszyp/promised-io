@@ -18,7 +18,7 @@ exports.addToArray = function(arr, name, value){
 	if(value === undefined || value === null){
 		value = "";
 	}
-	
+
 	switch(type(value)){
 		case "[object String]":
 		case "[object Number]":
