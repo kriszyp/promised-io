@@ -1,10 +1,10 @@
 Promised-IO is a cross-platform package for asynchronous promise-based IO. Promises
 provide a simple robust mechanism for asynchronicity with separation of concerns by encapsulating
 eventual completion of an operation with side effect free callback registration
-separate from call invocation. Promised-IO provides cross-platform 
+separate from call invocation. Promised-IO provides cross-platform
 file, HTTP, and system interaction with promises for asynchronous operations.
 
-Promised-IO also utilizes "lazy arrays" for progressively completed 
+Promised-IO also utilizes "lazy arrays" for progressively completed
 actions or for streaming of data. Lazy arrays provide all the standard iterative Array methods for
 receiving callbacks as actions are completed. Lazy arrays are utilized
 for progressive loading of files and HTTP responses.
@@ -19,7 +19,7 @@ Promised-IO can be installed via npm:
 
 The promise module provides the primary tools for creating new promises and interacting
 with promises. The promise API used by promised-io is the [Promises/A](http://wiki.commonjs.org/wiki/Promises/A)
-proposal used by Dojo, jQuery, and other toolkits. Within promised-io, a promise is 
+proposal used by Dojo, jQuery, and other toolkits. Within promised-io, a promise is
 defined as any object that implements the Promises/A API, that is they provide a
 then() method that can take a callback. The then() methods definition is:
 
@@ -32,9 +32,9 @@ to create promises.
 
 	when = require("promised-io/promise").when;
 	when(promiseOrValue, fulfilledHandler, errorHandler);
-	
+
 You can pass a promise to the when() function and the fulfillment and error handlers will be registered for it's
-completion *or* you can pass a regular value, and the fulfillment handler will be 
+completion *or* you can pass a regular value, and the fulfillment handler will be
 immediately be called. The when function is a staple of working with promises because
 it allows you to write code that normalizes interaction with synchronous values and asynchronous promises.
 If you pass in a promise, a new promise for the result of execution of the callback handler
@@ -56,8 +56,8 @@ usage pattern looks like:
     	// create a new Deferred
     	var deferred = new Deferred();
     	setTimeout(function(){
-    		// fulfill the deferred/promise, all listeners to the promise will be notified, and 
-    		// provided the value as the value of the promise 
+    		// fulfill the deferred/promise, all listeners to the promise will be notified, and
+    		// provided the value as the value of the promise
     		deferred.resolve(value);
     	}, ms);
     	// return the promise that is associated with the Deferred object
@@ -65,7 +65,7 @@ usage pattern looks like:
     }
 
 The Deferred can optionally take a canceler function. This function will cause resulting
-promises to have a cancel() method, and if the cancel() method is called, the 
+promises to have a cancel() method, and if the cancel() method is called, the
 Deferred will be canceled and the canceler function will be called.
 
 The Deferred object has the following methods and properties:
@@ -86,7 +86,7 @@ will be notified.
 
 ### promise
 
-This is the promise object associated with the Deferred instance. The promise object 
+This is the promise object associated with the Deferred instance. The promise object
 will not have any of the Deferred's fulfill or reject methods, and only provides an interface
 for listening. This can be safely provided to consumers without any chance of being modified.
 
@@ -95,22 +95,22 @@ for listening. This can be safely provided to consumers without any chance of be
     deferred.cancel();
 
 This will cancel the Deferred.
- 
+
 ## currentContext
 
 One of the challenges with working asynchronous code is that there can be times when
 you wish for some contextual state information to be preserved across multiple
 asynchronous actions, without having to actually pass the state to each function in
 the asynchronous chain. Common examples of such contextual state would be tracking
-the current transaction or the currently logged in user. Such state information could be 
+the current transaction or the currently logged in user. Such state information could be
 stored in a singleton (a module property or a global variable), but with asynchronous
 actions being interleaved, this is unsuitable for tracking state across asynchronous continuations
-of an action. 
+of an action.
 
 The promised-io package's promise module provides a facility for tracking state across
 asynchronous operations. The promise module tracks the "currentContext" global variable,
 and whatever value that was in the variable at the time a promise was created
-will be restored when that promise is fulfilled (or rejected). 
+will be restored when that promise is fulfilled (or rejected).
 
 ## all
 
@@ -120,7 +120,7 @@ The all() function can be passed an array of promises, or multiple promises as i
 arguments, and all() will return a new promise that represents the completed values when all the promises
 have been fulfilled. This allows you to easily run multiple asynchronous actions, and wait
 for the completion ("join") of all the actions. For example:
- 
+
 	group = all(promise1, promise2, promise3);
 	group.then(function(array){
 		var value1 = array[0]; // result of promise1
@@ -134,8 +134,13 @@ for the completion ("join") of all the actions. For example:
 
 The first() function can be passed an array of promises, or multiple promises as individual
 arguments, and first() will return a new promise that represents the completed value when the first promise
+<<<<<<< HEAD
 is fulfilled. This allows you to run multiple asynchronous actions and get the first result. For example:
  
+=======
+is fulfilled. This allows you to run multiple asynchronous actions get the first result. For example:
+
+>>>>>>> get rid of some trailing spaces
 	response = first(requestToMainSite, requestToMirrorSite1, requestToMirrorSite2);
 	response.then(function(response){
 		// response from the first site to respond
@@ -152,7 +157,7 @@ startingValue for the first function).
 
 ## whenPromise
 
-	resultPromise = require("promised-io/promise").whenPromise(valueOrPromise, fulfillmentHandler, errorHandler); 
+	resultPromise = require("promised-io/promise").whenPromise(valueOrPromise, fulfillmentHandler, errorHandler);
 
 The whenPromise() function behaves exactly like when() except that whenPromise
 will always return a promise, even if a non-promise value is passed in.
@@ -164,10 +169,10 @@ will always return a promise, even if a non-promise value is passed in.
 Takes a hash of promises and returns a promise that is fulfilled once all the promises in the hash keys are fulfilled.
 
 # fs
-	
+
 This module provides promise-based access to the filesystem. The API of the fs module
 basically follows the [Node File System module API](http://nodejs.org/api/fs.html).
-Each of the asynchronous functions in the Node's FS API is reflected with a corresponding 
+Each of the asynchronous functions in the Node's FS API is reflected with a corresponding
 function in the fs module that returns a promise (instead of requiring a callback argument in the initial call).
 For example, where Node has fs.rename(path1, path2, [callback]), with promised-io
 you would call it:
@@ -176,6 +181,7 @@ you would call it:
 	fs.rename(path1, path2).then(function(){
 		// finished renaming
 	});
+<<<<<<< HEAD
 
 Any callback arguments will be the same minus the error argument:
 
@@ -185,6 +191,8 @@ Any callback arguments will be the same minus the error argument:
 	}, function(error) {
 		// Handle errors here instead
 	});
+=======
+>>>>>>> get rid of some trailing spaces
 
 One function that does differ from NodeJS's fs module is the open() function.
 
@@ -207,9 +215,9 @@ To close the file object, we can write:
 We can also use file.writeSync and file.closeSync for the synchronous versions of these
 functions.
 
-The file object is also a lazy array, which means you can read from the file using 
+The file object is also a lazy array, which means you can read from the file using
 standard array methods. To asynchronously read the contents of a file, you can do:
- 
+
 	file.forEach(function(chunk){
 		// called for each chunk of the file until the end of the file is reached.
 	});
@@ -222,7 +230,7 @@ streams of data. Array methods can be called and they will be
 asynchronously executed as data is available. Lazy arrays are powerful way to model
 asynchronous streams since they can used like other JavaScript arrays.
 
-Typically you don't need to directly use this module, rather other IO modules like the 
+Typically you don't need to directly use this module, rather other IO modules like the
 file system (fs) and HTTP (http-client) modules provide lazy arrays that you can interact
 with. For example, we could search through a file for the string "lazy" and stop reading
 once we find it using the standard some() method:
@@ -239,8 +247,8 @@ as the stream data becomes available:
 
 Additional iterative methods can also access data as it available *and* as it is requested from
 the returned lazy array. This means that in order for this function to be excuted, the
-resulting array should have a forEach (or any of the other standard methods) called on 
-it to trigger the request for data. These methods follow this behavior: 
+resulting array should have a forEach (or any of the other standard methods) called on
+it to trigger the request for data. These methods follow this behavior:
 
 * filter
 * every
@@ -272,20 +280,25 @@ the some() method and provide an array length, if it is known.
 ## first
 
 	first = require("promised-io/lazy-array").first(lazyArray);
-	
+
 This function returns the first element in a lazy array.
 
 ## last
 
 	last = require("promised-io/lazy-array").last(lazyArray);
-	
+
 This function returns the last element in a lazy array.
 
 ## get
 
 	item = require("promised-io/lazy-array").get(index);
+<<<<<<< HEAD
 	
 This function returns an element by index from a lazy array.
+=======
+
+This function returns the an element by index from a lazy array.
+>>>>>>> get rid of some trailing spaces
 
 # http-client
 

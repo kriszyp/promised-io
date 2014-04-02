@@ -12,7 +12,7 @@ function LazyArray(hasSomeAndLength){
 	return new SomeWrapper(hasSomeAndLength);
 };
 var exports = LazyArray;
-exports.LazyArray = LazyArray;  
+exports.LazyArray = LazyArray;
 exports.first = function(array){
 	return exports.get(array, 0);
 };
@@ -35,7 +35,7 @@ exports.get = function(array, index){
 
 var testProto = {};
 var testProto2 = {a:"b"};
-testProto.__proto__ = testProto2; 
+testProto.__proto__ = testProto2;
 var mutableProto = testProto.a == "b";
 function SomeWrapper(hasSomeAndLength){
 	if(mutableProto){

@@ -98,7 +98,7 @@ vows.describe("OAuth").addBatch({
 				pathname: "/foo/poop",
 				headers: {}
 			}, ["bar", "foo"]);
-			assert.equal(request.headers.authorization, 'OAuth oauth_consumer_key="consumerkey",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1272399856",oauth_nonce="ybHPeOEkAUJ3k2wJT9Xb43MjtSgTvKqp",oauth_version="1.0",oauth_signature="7ytO8vPSLut2GzHjU9pn1SV9xjc%3D"'); 
+			assert.equal(request.headers.authorization, 'OAuth oauth_consumer_key="consumerkey",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1272399856",oauth_nonce="ybHPeOEkAUJ3k2wJT9Xb43MjtSgTvKqp",oauth_version="1.0",oauth_signature="7ytO8vPSLut2GzHjU9pn1SV9xjc%3D"');
 		}
 	}
 })["export"](module);

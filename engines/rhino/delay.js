@@ -28,7 +28,7 @@ exports.schedule = function(ms){
 
 var nextId = 1,
     timeouts = {},
-    timer, 
+    timer,
     queue;
 
 var _scheduleTimeout = function(callback, delay, repeat)
@@ -65,14 +65,14 @@ var _scheduleTimeout = function(callback, delay, repeat)
         }
     });
     delay = Math.floor(delay);
-    
+
     if(repeat){
         timer.schedule(task, delay, delay);
     }
     else{
         timer.schedule(task, delay);
     }
-    
+
     return id;
 }
 
