@@ -30,7 +30,7 @@ to create promises.
 
 ## when
 
-	when = require("promised-io/promise");
+	when = require("promised-io/promise").when;
 	when(promiseOrValue, fulfilledHandler, errorHandler);
 	
 You can pass a promise to the when() function and the fulfillment and error handlers will be registered for it's
