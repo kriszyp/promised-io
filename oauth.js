@@ -38,11 +38,11 @@ function Client(identifier, secret, tempRequestUrl, tokenRequestUrl, callback, v
 	this.signatureMethod = signatureMethod = signatureMethod || "HMAC-SHA1";
 	this.generateNonce = nonceGenerator || Client.makeNonceGenerator(32);
 	this.headers = headers || Client.Headers;
-	
+
 	if(this.signatureMethod != "PLAINTEXT" && this.signatureMethod != "HMAC-SHA1"){
 		throw new Error("Unsupported signature method: " + this.signatureMethod);
 	}
-	
+
 	// We don't store the secrets on the instance itself, that way it can
 	// be passed to other actors without leaking
 	secret = encodeRfc3986(secret);
@@ -51,7 +51,7 @@ function Client(identifier, secret, tempRequestUrl, tokenRequestUrl, callback, v
 			baseString = tokenSecret;
 			tokenSecret = "";
 		}
-		
+
 		var key = secret + "&" + tokenSecret;
 		if(signatureMethod == "PLAINTEXT"){
 			return key;
@@ -75,11 +75,11 @@ Client.NonceChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456
 Client.makeNonceGenerator = function(nonceSize){
 	var nonce = Array(nonceSize + 1).join("-").split("");
 	var chars = Client.NonceChars.split("");
-	
+
 	return function nonceGenerator(){
 		return nonce.map(getRandomChar).join("");
 	};
-	
+
 	function getRandomChar(){
 		return chars[Math.floor(Math.random() * chars.length)];
 	}
@@ -120,7 +120,7 @@ Client.prototype.request = function(originalRequest){
 			request[key] = originalRequest[key];
 		}
 	}
-	
+
 	// Normalize the request. `engines/node/http-client.request` is
 	// quite flexible, but this should do it.
 	if(request.url){
@@ -146,7 +146,7 @@ Client.prototype.request = function(originalRequest){
 	// We'll be setting the Authorization header; due to how `engines/node/http-client.request`
 	// is implemented we need to set the Host header as well.
 	request.headers.host = request.headers.host || request.hostname + (request.port ? ":" + request.port : "");
-	
+
 	// Parse all request parameters into a flattened array of parameter pairs.
 	// Note that this array contains munged parameter names.
 	var requestParams = [], uncombinedRequestParams = [];
@@ -173,7 +173,7 @@ Client.prototype.request = function(originalRequest){
 	request.queryString = requestParams.reduce(function(qs, v, i){
 		return qs + (i % 2 ? "=" + querystring.escape(v) : (qs.length ? "&" : "") + querystring.escape(v));
 	}, "");
-	
+
 	// Depending on the request content type, look for request parameters in the body
 	var waitForBody = false;
 	if(request.headers && request.headers["Content-Type"] == "application/x-www-form-urlencoded"){
@@ -182,7 +182,7 @@ Client.prototype.request = function(originalRequest){
 			return body;
 		});
 	}
-	
+
 	// If we're a POST or PUT and are not sending any content, or are sending urlencoded content,
 	// add the `request.request` to the request body. If we are sending non-urlencoded content through
 	// a POST or PUT, the `request.requestParams` are ignored.
@@ -194,7 +194,7 @@ Client.prototype.request = function(originalRequest){
 			request.headers["Content-Type"] = "application/x-www-form-urlencoded";
 		});
 	}
-	
+
 	// Sign the request and then actually make it.
 	return whenPromise(waitForBody, function(){
 		this._signRequest(request, requestParams);
@@ -270,23 +270,23 @@ Client.prototype._createSignatureBase = function(requestMethod, baseUri, params)
 Client.prototype._signRequest = function(request, requestParams){
 	// Calculate base URI string
 	var baseUri = this._normalizeUrl(request);
-	
+
 	// Register OAuth parameters and add to the request parameters
 	// Additional parameters can be specified via the `request.oauthParams` object
 	var oauthParams = this._collectOAuthParams(request, requestParams);
-	
+
 	// Generate parameter string
 	var params = this._normalizeParams(requestParams);
-	
+
 	// Sign the base string
 	var baseString = this._createSignatureBase(request.method, baseUri, params);
 	oauthParams.oauth_signature = this._createSignature(baseString);
-	
+
 	// Add Authorization header
 	request.headers.authorization = "OAuth " + Object.keys(oauthParams).map(function(name){
 		return encodeRfc3986(name) + "=\"" + encodeRfc3986(oauthParams[name]) + "\"";
 	}).join(",");
-	
+
 	// Now the request object can be used to make a signed request
 	return request;
 };
@@ -296,7 +296,7 @@ Client.prototype.obtainTempCredentials = function(oauthParams, extraParams){
 	if(this.callback && !oauthParams.oauth_callback){
 		oauthParams.oauth_callback = this.callback;
 	}
-	
+
 	return this.request({
 		method: "POST",
 		url: this.tempRequestUrl,

@@ -7,7 +7,7 @@ if(typeof console !== "undefined"){
 }
 if(typeof process !== "undefined"){
 	exports.args = process.argv;
-	exports.env = process.env;	
+	exports.env = process.env;
 	exports.print = console.log;
 	exports.dir = console.dir;
 }

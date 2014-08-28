@@ -4,7 +4,7 @@
 
 if (typeof java === "object"){
 	var fs = require("./engines/rhino/fs");
-	
+
 	// for rhino
 	for(var i in fs){
 		exports[i] = fs[i];
@@ -17,7 +17,7 @@ var fs = require("fs"),
 	defer = require("./promise").defer,
 	when = require("./promise").when,
 	convertNodeAsyncFunction = require("./promise").convertNodeAsyncFunction;
-	
+
 // convert all the non-sync functions that have a sync counterpart
 for (var i in fs) {
 	if ((i + 'Sync') in fs) {
@@ -42,7 +42,7 @@ function File(fd){
 					});
 				}else{
 					fs.read(fd, buffer, 0, 4096, null, readResponse);
-				} 
+				}
 				function readResponse(err, bytesRead){
 					if(err){
 						deferred.reject(err);
@@ -81,7 +81,7 @@ function File(fd){
 				}
 			}
 			readAndSend();
-			return deferred.promise;							
+			return deferred.promise;
 		},
 		length: 0
 	});
@@ -106,11 +106,11 @@ function File(fd){
 	return file;
 }
 File.prototype = LazyArray.prototype;
- 
-var nodeRead = exports.read; 
+
+var nodeRead = exports.read;
 exports.read = function(path, options){
 	if(path instanceof File){
-		var args = arguments; 
+		var args = arguments;
 		return when(path.fd, function(fd){
 			args[0] = fd;
 			return nodeRead.apply(this, args);
@@ -120,11 +120,11 @@ exports.read = function(path, options){
 	}
 };
 
-var nodeWrite = exports.write; 
+var nodeWrite = exports.write;
 exports.write = function(path, contents, options, encoding){
 	if(path instanceof File){
 		var id = Math.random();
-		var args = arguments; 
+		var args = arguments;
 		return when(path.fd, function(fd){
 			args[0] = fd;
 			if(typeof contents == "string"){
@@ -136,10 +136,10 @@ exports.write = function(path, contents, options, encoding){
 		return exports.writeFileSync(path, contents, options);
 	}
 };
-var nodeClose = exports.close; 
+var nodeClose = exports.close;
 exports.close = function(file){
 	if(file instanceof File){
-		var args = arguments; 
+		var args = arguments;
 		return when(file.fd, function(fd){
 			args[0] = fd;
 			return nodeClose.apply(this, args);

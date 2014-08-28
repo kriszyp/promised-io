@@ -39,5 +39,8 @@
   "devDependencies":{
     "patr": ">=0.2.6",
     "vows": ">=0.5.10"
+  },
+  "scripts": {
+    "test": "node ./tests/oauth.js; node ./tests/promise.js; node ./tests/querystring.js"
   }
 }

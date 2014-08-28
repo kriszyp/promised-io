@@ -18,9 +18,9 @@ exports.stat = exports.statSync = function(path) {
 			size: File.size(path)
 		};
 	}catch(e){
-    	var deferred = defer();
-    	deferred.reject(e);
-    	return deferred.promise;
+		var deferred = defer();
+		deferred.reject(e);
+		return deferred.promise;
 	}
 };
 
