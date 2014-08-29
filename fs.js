@@ -22,13 +22,45 @@ var fs = require("fs"),
 for (var i in fs) {
 	if ((i + 'Sync') in fs) {
 		// async
-		exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
+		if (asyncFunctionHasError(i)){
+			exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
+		}
+		else {
+			(function(asyncFunction){
+				// This function replaces the callback with one that fakes an error parameter
+				// Because we can't assign to replacementAsyncFunction.length this assumes that
+				// the asynchronous function always has two arguments (a and b are only used for this)
+				var replacementAsyncFunction = function(a, b){
+					var callback = arguments[arguments.length - 1];
+					arguments[arguments.length - 1] = function(){
+						callback.apply(this, [false].concat(Array.prototype.slice.call(arguments))); // err is always false
+					}
+					asyncFunction.apply(this, arguments);
+				};
+
+				exports[i] = convertNodeAsyncFunction(replacementAsyncFunction);
+			})(fs[i]);
+		}
 	}
 	else{
 		// sync, or something that we can't auto-convert
 		exports[i] = fs[i];
 	}
 }
+
+// Some fs functions never return an error, so in that case the first return value is the result.
+function asyncFunctionHasError(asyncFunctionName){
+    var functionsWithoutError = ["exists"],
+        functionName;
+    for (var i=0; i<functionsWithoutError.length; i++){
+        functionName = functionsWithoutError[i];
+        if (asyncFunctionName === functionName){
+            return false;
+        }
+    };
+    return true;
+}
+
 function File(fd){
 	var file = new LazyArray({
 		some: function(callback){
