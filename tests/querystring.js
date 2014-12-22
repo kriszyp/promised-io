@@ -23,4 +23,4 @@ exports.testParsingMungedQuerystring = function(){
 };
 
 if (require.main === module)
-    require("patr/runner").run(exports);
+	require("patr/runner").run(exports);
