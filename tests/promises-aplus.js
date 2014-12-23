@@ -1,30 +1,44 @@
 var lib = require("../promise");
 var promisesAplusTests = require("promises-aplus-tests");
 
-exports.adapter = {
+exports.baseAdapter = {
+	resolved: Promise.resolve,
+	rejected: Promise.reject,
+	deferred: function () {
+		var resolver, rejecter;
+		var promise = new Promise(function (resolve, reject) {
+			resolver = resolve;
+			rejecter = reject;
+		});
+		return {
+			promise: promise,
+			resolve: resolver,
+			reject: rejecter
+		};
+	}
+};
+
+exports.libAdapter = {
 	resolved: function (value) {
 		var deferred = lib.defer();
 		deferred.resolve(value);
 		return deferred.promise;
 	},
 	rejected: function (reason) {
-		try {
-			var deferred = lib.defer();
-			deferred.reject(reason);
-			return deferred.promise;
-		} catch (e) {}
+		var deferred = lib.defer();
+		deferred.reject(reason);
+		return deferred.promise;
 	},
 	deferred: function () {
-		try {
-			return lib.defer();
-		}
-		catch (e) {}
+		return lib.defer();
 	}
-};
+}
 
 function run(adapter, callback) {
 	promisesAplusTests(adapter, callback);
 }
 
-if (require.main === module)
-	run(exports.adapter, function () {});
+if (require.main === module) {
+	// run(exports.baseAdapter, function () {});
+	run(exports.libAdapter, function () {});
+}

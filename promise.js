@@ -639,6 +639,45 @@ exports.execute = function(asyncFunction){
 	return deferred.promise;
 };
 
+function isGeneratorFunction(obj){
+	return obj && obj.constructor && 'GeneratorFunction' == obj.constructor.name;
+}
+
+/**
+ * Promise-based coroutine trampoline
+ * Adapted from https://github.com/deanlandolt/copromise/blob/master/copromise.js
+ */
+function run(coroutine){
+	var deferred = defer();
+	(function next(value, exception) {
+		var result;
+		try {
+			result = exception ? coroutine.throw(value) : coroutine.next(value);
+		}
+		catch (error) {
+			return deferred.reject(error);
+		}
+		if (result.done) return deferred.resolve(result.value);
+		exports.when(result.value, next, function(error) {
+			next(error, true);
+		});
+	})();
+	return deferred.promise;
+};
+
+/**
+ * Creates a task from a coroutine, provided as generator. The `yield` function can be provided
+ * a promise (or any value) to wait on, and the value will be provided when the promise resolves.
+ * @param coroutine	 generator or generator function to treat as a coroutine
+ * @return promise for the return value from the coroutine
+ */
+exports.spawn = function(coroutine){
+	if (isGeneratorFunction(coroutine)) {
+		coroutine = coroutine();
+	}
+	return run(coroutine);
+}
+
 /**
  * Converts a Node async function to a promise returning function
  * @param func	 node compatible async function which takes a callback as its last argument
