@@ -38,6 +38,9 @@
   "main": "./promise",
   "devDependencies":{
     "patr": ">=0.2.6",
-    "vows": ">=0.5.10"
+    "promises-aplus-tests": "*"
+  },
+  "scripts": {
+    "test": "node tests/"
   }
 }
