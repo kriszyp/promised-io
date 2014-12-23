@@ -56,7 +56,7 @@ function generateClient() {
 }
 
 exports.testSigningUrl = {
-	"without token": function(){
+	"test without token": function(){
 		var client = generateClient();
 
 		// provide a valid signature when no token is present
@@ -68,7 +68,7 @@ exports.testSigningUrl = {
 		assert.equal(signature, "7ytO8vPSLut2GzHjU9pn1SV9xjc=");
 	},
 
-	"with token": function(){
+	"test with token": function(){
 		var client = generateClient();
 
 		// provide a valid signature when a token is present
@@ -82,7 +82,7 @@ exports.testSigningUrl = {
 		assert.equal(signature, "9LwCuCWw5sURtpMroIolU3YwsdI=");
 	},
 
-	"with token and secret": function(){
+	"test with token and secret": function(){
 		var client = generateClient();
 
 		// provide a valid signature when a token and a token secret are present
