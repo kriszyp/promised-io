@@ -1,5 +1,5 @@
 Promised-IO is a cross-platform package for asynchronous promise-based IO. Promises
-provide a simple robust mechanism asynchronicity with separation of concerns by encapsulating
+provide a simple robust mechanism for asynchronicity with separation of concerns by encapsulating
 eventual completion of an operation with side effect free callback registration
 separate from call invocation. Promised-IO provides cross-platform 
 file, HTTP, and system interaction with promises for asynchronous operations.
@@ -46,7 +46,7 @@ from the fulfilledHandler.
 	deferred = require("promised-io/promise").Deferred(canceler);
 
 The Deferred constructor is the primary mechanism for creating new promises. The Deferred
-object is a form of a promise that with an interface for fulfilling or rejecting the promise.
+object is a form of a promise with an interface for fulfilling or rejecting the promise.
 A Deferred object is a means for a producer to resolve a promise and it also provides
 a promise for consumers that are listening for the resolution of the promise. The basic
 usage pattern looks like:
@@ -64,7 +64,7 @@ usage pattern looks like:
     	return deferred.promise;
     }
 
-The Deferred can optional take a canceler function. This function will cause resulting
+The Deferred can optionally take a canceler function. This function will cause resulting
 promises to have a cancel() method, and if the cancel() method is called, the 
 Deferred will be canceled and the canceler function will be called.
 
@@ -101,8 +101,8 @@ This will cancel the Deferred.
 One of the challenges with working asynchronous code is that there can be times when
 you wish for some contextual state information to be preserved across multiple
 asynchronous actions, without having to actually pass the state to each function in
-the asynchronous chain. A common examples of such contextual state would be tracking
-the current transaction, or the currently logged in user. Such state information could be 
+the asynchronous chain. Common examples of such contextual state would be tracking
+the current transaction or the currently logged in user. Such state information could be 
 stored in a singleton (a module property or a global variable), but with asynchronous
 actions being interleaved, this is unsuitable for tracking state across asynchronous continuations
 of an action. 
@@ -134,7 +134,7 @@ for the completion ("join") of all the actions. For example:
 
 The first() function can be passed an array of promises, or multiple promises as individual
 arguments, and first() will return a new promise that represents the completed value when the first promise
-is fulfilled. This allows you to run multiple asynchronous actions get the first result. For example:
+is fulfilled. This allows you to run multiple asynchronous actions and get the first result. For example:
  
 	response = first(requestToMainSite, requestToMirrorSite1, requestToMirrorSite2);
 	response.then(function(response){
@@ -285,7 +285,7 @@ This function returns the last element in a lazy array.
 
 	item = require("promised-io/lazy-array").get(index);
 	
-This function returns the an element by index from a lazy array.
+This function returns an element by index from a lazy array.
 
 # http-client
 
