@@ -16,7 +16,7 @@ exports.testMungingObjectParams = function(){
 };
 
 exports.testParsingMungedQuerystring = function(){
-	var qs = "foo[]=bar&foo[]=baz&obj[key]=value";
+	var qs = "foo=bar&foo=baz&obj[key]=value";
 	var requestParams = [];
 	querystring.parseToArray(requestParams, qs);
 	assert.deepEqual(requestParams, ["foo[]", "bar", "foo[]", "baz", "obj[key]", "value"]);
