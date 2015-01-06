@@ -134,13 +134,8 @@ for the completion ("join") of all the actions. For example:
 
 The first() function can be passed an array of promises, or multiple promises as individual
 arguments, and first() will return a new promise that represents the completed value when the first promise
-<<<<<<< HEAD
 is fulfilled. This allows you to run multiple asynchronous actions and get the first result. For example:
- 
-=======
-is fulfilled. This allows you to run multiple asynchronous actions get the first result. For example:
 
->>>>>>> get rid of some trailing spaces
 	response = first(requestToMainSite, requestToMirrorSite1, requestToMirrorSite2);
 	response.then(function(response){
 		// response from the first site to respond
