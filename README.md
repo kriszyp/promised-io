@@ -176,7 +176,6 @@ you would call it:
 	fs.rename(path1, path2).then(function(){
 		// finished renaming
 	});
-<<<<<<< HEAD
 
 Any callback arguments will be the same minus the error argument:
 
@@ -186,8 +185,6 @@ Any callback arguments will be the same minus the error argument:
 	}, function(error) {
 		// Handle errors here instead
 	});
-=======
->>>>>>> get rid of some trailing spaces
 
 One function that does differ from NodeJS's fs module is the open() function.
 
@@ -287,13 +284,8 @@ This function returns the last element in a lazy array.
 ## get
 
 	item = require("promised-io/lazy-array").get(index);
-<<<<<<< HEAD
-	
-This function returns an element by index from a lazy array.
-=======
 
-This function returns the an element by index from a lazy array.
->>>>>>> get rid of some trailing spaces
+This function returns an element by index from a lazy array.
 
 # http-client
 
