@@ -49,8 +49,13 @@ function File(fd){
 						return;
 					}
 					if (bytesRead === 0){
-						fs.close(fd);
-						deferred.resolve();
+						fs.close(fd, function (err) {
+							if(err){
+								deferred.reject(err);
+								return;
+							}
+							deferred.resolve();
+						});
 					}
 					else {
 						var result;
