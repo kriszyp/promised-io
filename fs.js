@@ -20,7 +20,7 @@ var fs = require("fs"),
 
 // convert all the non-sync functions that have a sync counterpart
 for (var i in fs) {
-	if ((i + 'Sync') in fs) {
+	if (typeof fs[i + "Sync"] === "function") {
 		// async
 		exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
 	}
