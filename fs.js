@@ -22,7 +22,9 @@ var fs = require("fs"),
 for (var i in fs) {
 	if ((i + 'Sync') in fs) {
 		// async
-		exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
+		if (fs[i]) {
+			exports[i] = convertNodeAsyncFunction(fs[i], i === "readFile");
+		}
 	}
 	else{
 		// sync, or something that we can't auto-convert
